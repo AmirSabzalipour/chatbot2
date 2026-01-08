@@ -1,1 +1,3401 @@
+Rapid SCADA Docs (EN, latest)
+Table of Contents
 
+
+
+Rapid SCADA Docs
+
+• v6.4
+– v6.4
+– v6.1
+– v5.8
+• Table of contents
+Table of contents
+• Overview
+– Introduction
+– Applications
+– Software Architecture
+• Installation
+– System Requirements
+– Install on Windows
+– Install on Windows Manually
+– Install on Linux
+– Install Modules
+– Service Management
+– Transfer to New Server
+– Safety
+• Configuration
+– Configuration Basics
+– Configuration Database
+– Device Polling
+– Channels
+– Scripts and Formulas
+– Views
+– Table Views
+– User Management
+• Modules
+– Chart Pro Plugin
+– Dashboard Plugin
+– Elastic Report Plugin
+– Map Plugin
+– Notification Plugin
+– Automatic Control Module
+– Database Export Module
+– Rapid Gate Module
+– Database Import Driver
+– Modbus Slave Driver
+– Telegram Driver
+• Additional Applications
+– Auto Report
+• Enterprise Edition
+– Overview
+– Audit Log Plugin
+– Guard Plugin
+• Developers
+– Development Basics
+– Logic Module Development
+– Driver Development
+– Web Plugin Development
+– Module Store
+• Version History
+– History of Rapid SCADA
+– Server History
+– Communicator History
+– Webstation History
+– Agent History
+– Administrator History
+– History of Additional Applications
+Introduction
+What is Rapid SCADA
+Rapid SCADA is an open source industrial automation platform. The out of the box software provides tools for rapid creation of monitoring and control systems. In case of large implementation, Rapid SCADA is used as a core for development of custom SCADA and MES solutions for a Customer.
+Open source is the key to software transparency and security. The source code is available on GitHub. Rapid SCADA is released under Apache License 2.0 which permits creation of new derivative software products.
+Rapid SCADA is a perfect choice for creating large distributed industrial automation systems. Rapid SCADA runs on servers, embedded computers and in the cloud. Rapid SCADA nodes exchange information between themselves, and interact with external databases in real time.
+The main classes of systems developed using Rapid SCADA are the following:
+• Industrial automation systems and IIoT systems.
+• Process control systems.
+• Energy accounting systems.
+Key Features
+General
+Supported OS families
+Windows, Linux
+Unlimited number of channels, tags and devices
+?
+Remote configuration and maintenance of projects
+?
+Simultaneous work on projects with GIT
+?
+Free and paid technical support
+?
+Security
+HTTPS, SSL
+?
+Brute force attack protection
+?
+Captcha on login
+?
+Connection monitoring
+?
+Password encryption
+?
+User activity logging
+?
+Redundancy
+Primary and backup server with automatic data sync
+?
+Central and remote servers with automatic data sync
+?
+Mirroring
+?
+Archiving
+Data storages
+Files, PostgreSQL, InfluxDB
+Maximum numbers of independent archives
+31
+Writing with period
+?
+Writing on change
+?
+Connectivity
+Integration with databases
+Oracle, MS SQL, MySQL, PostgreSQL
+Industrial protocols
+OPC UA, OPC Classic, Modbus, MQTT, SNMP, etc.
+Programming
+REST API
+?
+Sample modules with source code
+?
+Developer documentation
+?
+
+Applications
+Server
+Server manages the data archives, performs mathematical calculations and provides information to the client applications. Server writes data to the main archive and makes the backup copy simultaneously.
+Figure 1. Graphical shell for Server configuring
+Figure 1. Graphical shell for Server configuring
+Server works as a service. It does not have a user interface. Server operates continuously in the background regardless of user login and logout. The graphical shell for Server configuring is built into the Administrator application (see Figure 1).
+The application monitors user connections and checks user rights while processing requests and passing commands. Information about the application state and performed actions is stored in textual log files. Server is designed for non-stop running.
+Additional server modules allow extending the functionality of Server according to customer requirements.
+Communicator
+Communicator interacts with controllers and transmits data to the Server application. Communication with controllers connected to a system is executed in parallel across multiple lines. Communicator receives current data, archive data, and events from controllers and sends commands to controllers. The application helps troubleshooting issues with communication lines and devices.
+Figure 2. Graphical shell for Communicator configuring
+Figure 2. Graphical shell for Communicator configuring
+Communicator works as a service, and does not have a user interface. The graphical shell for Communicator configuring is built into the Administrator application (see Figure 2). Information about the application, communication lines and each connected device is written in log files. Communicator is designed for non-stop running.
+Developers are able to implement their own device drivers to interact with a variety of controllers.
+Webstation
+Webstation is a web application that displays information to a dispatcher via browser and implements the function of sending commands. Data can be represented in various forms as tables, mimic diagrams, reports, etc. Reports are generated in commonly used Excel, PDF and HTML formats.
+Figure 3. Webstation application. Scheme view
+Figure 3. Webstation application. Scheme view
+Figure 4. Webstation application. Table view
+Figure 4. Webstation application. Table view
+User is able to choose a view (table or scheme) and a date to access archive data. To show a trend, click an item icon in a table or an appropriate element in a scheme.
+Webstation is available from any computer or tablet connected to an organization network, no software installation is required. Access is managed by a system administrator who defines user rights.
+The functionality of Webstation can be extended by additional plugins. For example, Chart Pro Plugin extends the capabilities of Rapid SCADA charts: adds scaling, displaying of multiple charts, export to PNG and PDF. Elastic Report Plugin allows to generate reports according to a custom configuration. Using this plugin, you can build almost any desired report. Developers can create their own plugins for the web application, displaying information to an operator in any form.
+Agent
+Agent transfers configuration between Rapid SCADA instance and the Administrator application. In addition, Agent provides log files for displaying in Administrator. Agent runs as a service on a server where Rapid SCADA instance, controlled by Agent, is installed. An instance of Rapid SCADA includes the Server, Communicator and Webstation applications, all or some of these applications.
+Agent communicates with Administrator via TCP. Therefore, Administrator can be installed on the same computer as Agent, or on another computer that is accessible over the network. By default, Agent uses TPC port 10002. In case of remote access, incoming connections on this port must be allowed by the server firewall.
+Agent does not have a user interface. To check its operation, log files are used.
+Administrator
+The Administrator application (see Figure 5) is intended for developing Rapid SCADA projects and monitoring the state of the automated system. Administrator is an integrated development environment provides editing the configuration database, configuring the main Rapid SCADA applications, Server modules and device drivers.
+Figure 5. Administrator application
+Figure 5. Administrator application
+Tools and features of the Administrator application that speed up the configuration process are as follows:
+• Wizards for creating communication lines, devices and channels.
+• Import and export of the configuration database tables for exchanging works between projects.
+• Channel cloning to minimize manual input.
+• Searching, sorting and filtering the configuration database tables.
+A project contains a set of configuration files, mainly using the XML format. This approach makes it easy to copy projects from one computer to another. To control project versions and collaboration, Git is the best choice.
+
+Software Architecture
+Rapid SCADA software has a multi-tier architecture. Applications (services) included in the software interact with each other using the TCP protocol. Figure 1 shows a commonly used architecture for a simple system that is deployed in the default installation. Figure 2 shows a distributed architecture in which different services are deployed on separate hosts.
+Figure. 1. Default architecture
+Figure. 1. Default architecture
+Figure. 2. Distributed architecture
+Figure. 2. Distributed architecture
+Rapid SCADA includes the following main applications:
+1. Webstation is a web application that displays information to a dispatcher via a browser in tabular form, on diagrams and graphs, and also generates reports.
+2. Server manages the data archives, performs mathematical calculations and provides information to the client applications.
+3. Communicator collects data from controllers, diagnoses devices, and transmits information to the Server application over the network.
+Note that Rapid SCADA supports architecture options in which instances of the Server application exchange data with each other for the purpose of redundancy.
+
+
+Installation
+System Requirements
+Install on Windows
+Install on Windows Manually
+Install on Linux
+Install Modules
+Service Management
+Transfer to New Server
+Safety
+
+– 
+System Requirements
+Server Software Requirements
+Windows:
+• Operating system: Microsoft Windows Server 2016/2019/2022, Microsoft Windows 10/11.
+• .NET Runtime 8.0.
+• Microsoft IIS is required to deploy the web application.
+Linux:
+• Operating system: Ubuntu (recommended), Alpine, CentOS, Debian, Fedora, OpenSUSE, Red Hat, and more.
+• .NET Runtime 8.0.
+• Nginx is required to deploy the web application.
+Server Hardware Requirements
+Hardware configuration of a server depends on the scale of the automated system. The minimum configuration is determined by the operating system requirements. The methodology for estimating the required hard disk space is described in the Archives section.
+Rapid SCADA uses its own built-in database management system by default, so installing a third-party DBMS is not necessary. The software can run on physical or virtual machines.
+Workstation or Tablet Requirements
+• Up-to-date Chrome, Firefox, Safari or Edge browser.
+• Microsoft Office or LibreOffice is required to view reports.
+
+Install on Windows
+Preparing to install
+Rapid SCADA requires Internet Information Services (IIS) and .NET Runtime to be installed. Depending on the version of Windows, the installation process for those components may vary.
+Open Control Panel > Programs > Turn Windows features on or off and enable Internet Information Services. The selection of IIS child components can be kept as default.
+
+Download from the link and install ASP.NET Core Runtime 8.0.x (Hosting Bundle) and .NET Desktop Runtime.
+
+After the installation of the components is complete, open Control Panel > System and Security > Administrative Tools > Internet Information Services (IIS) Manager, navigate to Modules, and make sure that AspNetCoreModuleV2 is installed. If the module is missing, reinstall Hosting Bundle.
+
+Installation
+Download and unzip the Rapid SCADA distribution package. Run the ScadaSetup.exe file to open the installer shown in the figures below. Installation must be performed using an administrator account. Click the Install button to enter the installation options.
+Note: If the installer does not start, then open the properties of *.dll, *.exe files and unblock the files.
+
+HTTP port 80 is used by the Default Web Site. Therefore, the installer suggests a different port, such as 10008. To use port 80 for Rapid SCADA, the Default Web Site must be stopped.
+After the installation has completed successfully, launch a web browser and open http://localhost:10008
+Username: admin
+Password: scada
+The first time the web application starts, it takes time to load the data, so you may need to wait about 10 seconds and then refresh the login page. By default, Rapid SCADA runs the Hello World project. If errors occur during the installation process, analyze them using the installation log. Use the support forum to find a solution.
+The Rapid SCADA services actively write to log files. To extend the life of the hard drive and increase system performance, it is recommended to configure logging to RAM drive. Action sequence:
+1. Install the software for creating RAM drives, for example, AMD Radeon RAMDisk or Dataram RAMDisk.
+2. Specify the log directory in ScadaInstanceConfig.xml, for example, R:\SCADA\
+3. Restart the Rapid SCADA services or reboot the computer.
+If the web application is not in use, it stops. On a production server, it is preferable that the web application be always up and running. To ensure this, start Internet Information Services (IIS) Manager, select the ScadaAppPool application pool, open Advanced Settings of the application pool, and set the following options:
+• General - Start Mode: AlwaysRunning
+• Process Model - Idle Time-out: 0
+• Recycling - Regular Time Interval: 0
+Update
+The installer allows to update the previously installed Rapid SCADA version 6.
+Important
+• The update feature cannot be used to update Rapid SCADA from version 5 to version 6.
+• The update feature does not check the compatibility of the project being executed with the new version of the software.
+• The update must first be tested on a test server and only after verification run on a production server.
+The update is performed according to the following algorithm:
+1. Check if the specified installation directory exists.
+2. Stop the updated services.
+3. Create a backup copy of the updated applications.
+4. Update the selected applications. When an application is updated, the existing files are overwritten with the new files. The configuration and storage directories of the application are not affected. Software modules that have been installed additionally remain unchanged.
+5. Start the services.
+Uninstallation
+Uninstalling Rapid SCADA is also done using the installer. Therefore, it is recommended not to remove the Rapid SCADA distribution from the hard drive after installation.
+Rapid SCADA projects created by users are located by default inside the Documents folder. Therefore, after the removal of Rapid SCADA, the projects will remain. It is strongly not recommended to save projects inside the installation directory, because they may be accidentally deleted by the installer.
+
+Install on Windows Manually
+Manual Rapid SCADA setup provides full control over the process of the software installation, update and uninstallation.
+Installation
+1. Install Internet Information Services (IIS) by selecting the corresponding Windows components.
+2. Install ASP.NET Core Runtime 8.0.x (Hosting Bundle) and .NET Desktop Runtime from this link.
+  Note: If the web application is not needed on Windows, skip the item 1 and install only .NET Desktop Runtime.
+3. Copy the application files to the Rapid SCADA installation directory C:\Program Files\SCADA
+4. Register the services by executing the following files as administrator:
+ScadaAgent\svc_install.bat
+ScadaComm\svc_install.bat
+ScadaServer\svc_install.bat
+5. Register the web application:
+a. Open IIS Manager.
+b. Open the module list and make sure the AspNetCoreModuleV2 module is present.
+c. Create an application pool named ScadaAppPool, set .NET CLR version to No Managed Code.
+d. Open the advanced settings of the created application pool, and set the Identity parameter to LocalSystem.
+e. Add a new web site named ScadaWeb, specify the created application pool, available TCP port and the path
+C:\Program Files\SCADA\ScadaWeb
+  Note: HTTP port 80 is used by Default Web Site. Use another port, such as 10008, or stop Default Web Site.
+6. Create a RAM drive for writing logs:
+a. Install the software for creating RAM drives, for example, AMD Radeon RAMDisk or Dataram RAMDisk.
+b. Specify the log directory in ScadaInstanceConfig.xml, for example, R:\SCADA\
+7. Create a shortcut to the Administrator application (ScadaAdmin.exe) on the desktop.
+8. Restart the computer to start services automatically.
+9. After restart, open http://localhost:PORT or http://SERVER_IP:PORT in a web browser.
+Username: admin
+Password: scada
+Uninstallation
+1. Stop and unregister the services by executing the following files as administrator:
+ScadaAgent\svc_stop.bat
+ScadaAgent\svc_uninstall.bat
+ScadaComm\svc_stop.bat
+ScadaComm\svc_uninstall.bat
+ScadaServer\svc_stop.bat
+ScadaServer\svc_uninstall.bat
+2. Disable a RAM drive.
+3. Open IIS Manager and remove the previously created web application and application pool.
+4. Delete the Rapid SCADA installation directory with all contents.
+5. Remove the Administrator application shortcut from the desktop.
+
+
+Install on Linux
+This article provides commands for Ubuntu and Debian operating systems. When installing Rapid SCADA on other OS of the Linux family, use the appropriate commands.
+Installation
+1. Install ASP.NET Core Runtime 8.0.x according to the instructions.
+  If installation of .NET from the repository is not possible, the manual installation sequence is as follows:
+a. Download .NET binaries corresponding to the operating system from this link.
+b. Extract and copy the downloaded files to /usr/share/dotnet/
+c. Make the dotnet file executable:
+  sudo chmod +x /usr/share/dotnet/dotnet
+d. Create a link to the dotnet file:
+  sudo ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet
+2. Install Rapid SCADA from the package (option 1)
+  sudo dpkg -i rapidscada_VERSION_all.deb
+3. Install Rapid SCADA manually (option 2)
+a. Copy the extracted files from the scada folder to /opt/scada
+b. Make the scripts executable:
+  sudo chmod +x /opt/scada/make_executable.sh
+sudo /opt/scada/make_executable.sh
+c. Copy the extracted files from the daemons folder to /etc/systemd/system
+d. Enable daemons:
+  sudo systemctl enable scadaagent6.service
+sudo systemctl enable scadaserver6.service
+sudo systemctl enable scadacomm6.service
+sudo systemctl enable scadaweb6.service
+4. Create a RAM drive for writing logs:
+a. Create a log directory:
+  sudo mkdir /var/log/scada
+b. Make a backup copy the /etc/fstab file, and add the following line to the file
+  tmpfs           /var/log/scada  tmpfs   defaults,noatime,size=100m    0    0
+5. Install and setup Nginx:
+a. Install Nginx using the instructions: link 1, link 2, link 3. Installation commands:
+  sudo apt update
+sudo apt install nginx
+b. Create a self-signed certificate:
+  sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/nginx-selfsigned.key -out /etc/ssl/certs/nginx-selfsigned.crt
+c. Copy the extracted file nginx/default to /etc/nginx/sites-available after saving a backup copy of the existing file.
+6. Restart the computer:
+  sudo reboot
+7. After restart, open http://localhost or http://SERVER_IP in a web browser.
+Username: admin
+Password: scada
+Uninstallation
+1. Restore the original file /etc/fstab
+2. If Rapid SCADA was installed from the package:
+  sudo dpkg -r rapidscada
+3. If Rapid SCADA was installed manually:
+a. Disable daemons:
+  sudo systemctl disable scadaagent6.service
+sudo systemctl disable scadaserver6.service
+sudo systemctl disable scadacomm6.service
+sudo systemctl disable scadaweb6.service
+b. Remove the previously added daemon files from /etc/systemd/system
+c. Delete /opt/scada directory with all contents.
+4. Remove Nginx and .NET if necessary.
+
+Install Modules
+Rapid SCADA supports additional modules which extend the software functionality. Module distributions are available in the Download section of the official website and in Module Store. The installed module version must be compatible with the installed version of Rapid SCADA. Compatibility information is provided on the module's page in Module Store. The modules published in the Download section are compatible with the current version of Rapid SCADA.
+Install Server Modules
+The sequence of installing a new or updating an existing module of the Server application:
+1. Close the Administrator application if it is running.
+2. Unzip the module installation package.
+3. Copy all files from the SCADA folder of the module installation package to the Rapid SCADA installation directory with the hierarchy of directories retained.
+4. On Windows, find the copied *.dll library files, open their properties one by one and unlock the files.
+5. Start Administrator, open the project, find and open the Server > Modules page in the project explorer.
+6. Select the installed module in the list of unused modules and click the Activate button.
+7. If the module distribution contains configuration files located in the SCADA\ScadaServer\Config directory, copy them into your project.
+8. Perform the configuration of the module specified in the module documentation.
+9. Save the project and upload the configuration to the server.
+10. If the module requires registration:
+a. When started, the module writes the computer code to a file.
+b. In the Administrator application, select the module and click the Register button.
+c. Obtain a registration key, enter it in the appropriate field and save.
+d. Upload the configuration to the server again.
+Module File Structure
+ScadaAdmin\Lang\*.xml
+UI language files for the Administrator application
+ScadaAdmin\Lib\*.View.dll
+UI library for the Administrator application
+ScadaServer\Config\*.xml
+Module configuration to be copied to the project
+ScadaServer\Mod\*.Logic.dll
+Module logic library for the Server application
+Install Communicator Drivers
+The sequence of installing a new or updating an existing driver of the Communicator application:
+1. Close the Administrator application if it is running.
+2. Unzip the driver installation package.
+3. Copy all files from the SCADA folder of the driver installation package to the Rapid SCADA installation directory with the hierarchy of directories retained.
+4. On Windows, find the copied *.dll library files, open their properties one by one and unlock the files.
+5. Start Administrator, open the project, find and open the Communicator > Drivers page in the project explorer.
+6. Make sure that the installed driver is in the list of available drivers. And if the driver is selected, its description is displayed.
+7. Perform the configuration of the communication line and device specified in the driver documentation.
+8. Save the project and upload the configuration to the server.
+9. If the driver requires registration:
+a. When started, the driver writes the computer code to a file.
+b. In the Administrator application, select the driver and click the Register button.
+c. Obtain a registration key, enter it in the appropriate field and save.
+d. Upload the configuration to the server again.
+Driver File Structure
+ScadaAdmin\Lang\*.xml
+UI language files for the Administrator application
+ScadaAdmin\Lib\*.View.dll
+UI library for the Administrator application
+ScadaComm\Drv\*.Logic.dll
+Driver logic library for the Communicator application
+Install Webstation Plugins
+Additional modules for the Webstation application are called plugins. The sequence of installing a new or updating an existing plugin:
+1. Close the Administrator application if it is running.
+2. Unzip the plugin installation package.
+3. Copy all files from the SCADA folder of the plugin installation package to the Rapid SCADA installation directory with the hierarchy of directories retained.
+4. On Windows, find the copied *.dll library files, open their properties one by one and unlock the files.
+5. Start Administrator, open the project, find and open the Webstation > Plugins page in the project explorer.
+6. Select the installed plugin in the list of unused plugins and click the Activate button.
+7. If the plugin distribution contains configuration files located in the SCADA\ScadaWeb\Config directory, copy them into your project.
+8. If the plugin distribution contains views located in the SCADA\Views directory, it is recommended to copy them into your project as examples.
+9. Perform the configuration of the plugin specified in the plugin documentation.
+10. Save the project and upload the configuration to the server.
+11. If the plugin requires registration:
+a. When started, the plugin writes the computer code to a file.
+b. In the Administrator application, select the plugin and click the Register button.
+c. Obtain a registration key, enter it in the appropriate field and save.
+d. Upload the configuration to the server again.
+Plugin File Structure
+ScadaAdmin\Lib\*.View.dll
+UI library for the Administrator application
+ScadaWeb\config\*.xml
+Plugin configuration to be copied to the project
+ScadaWeb\lang\*.xml
+Plugin language files for the Webstation application
+ScadaWeb\wwwroot\*.*
+Static plugin files for the Webstation application
+ScadaWeb\*.dll
+Plugin libraries for the Webstation application
+
+Service Management
+The Server, Communicator and Agent applications run as services. On Linux, the Webstation application also runs as a separate service. To manage Rapid SCADA services, use the Administrator application or operating system tools.
+Services are managed by the Administrator application using the Instance Status form, which is opened by the  button located on the application toolbar.
+
+The following table contains the names of the Windows services and Linux daemons that are included in Rapid SCADA.
+Application
+Windows Serice
+Linux Daemon
+Server
+ScadaServer6
+scadaserver6
+Communicator
+ScadaComm6
+scadacomm6
+Webstation
+-
+scadaweb6
+Agent
+ScadaAgent6
+scadaagent6
+On Windows, the services.msc snap-in is available to manage services. The startup type of the Server, Communicator and Agent services is set to Automatic by default, so the services start when the operating system starts and stop when it shuts down. If autostart is not required, set the Manual startup type in the properties of the corresponding services.
+
+Commands to start daemons on Linux:
+sudo systemctl start scadaagent6
+sudo systemctl start scadaserver6
+sudo systemctl start scadacomm6
+sudo systemctl start scadaweb6
+Commands to stop daemons on Linux:
+sudo systemctl stop scadaweb6
+sudo systemctl stop scadacomm6
+sudo systemctl stop scadaserver6
+sudo systemctl stop scadaagent6
+
+Transfer to New Server
+This article describes how to migrate a running Rapid SCADA instance from one server to another. The sequence of actions is as follows:
+1. Check that connections with polled devices are configured on the new server:
+– there are serial ports whose numbers match the port numbers on the old server,
+– controllers polled over the network are available,
+– OPC servers installed and configured.
+2. Install Rapid SCADA on the new server and check its functionality with the default configuration.
+3. Stop the Server and Communicator services on the new server.
+4. Stop the Server and Communicator services on the obsolete server and disable automatic startup of these services.
+5. Copy data archives from the obsolete server to the new one. The method for copying archives depends on whether the archives are file-based or DBMS-based.
+6. Open the project in the Administrator application and upload the configuration to the new server with the  button.
+7. If additional modules are used, obtain and enter registration keys for the new server, then re-upload the project for execution.
+8. Check whether the new server operates well.
+If the new server does not work on the first try, stop the Server and Communicator services on it and start these services on the obsolete server. Information that will help resolve technical issues is contained in the application and module operation logs.
+Safety Recommendations
+File Protection
+If Rapid SCADA is used in a corporate environment, ensure that other users do not have access to the Rapid SCADA installation directory. On Windows, open the properties of the directory containing Rapid SCADA applications, choose the Security tab, check and and configure access rights.
+HTTPS
+Configure a web server to enable HTTPS protocol for the Webstation application. Using HTTPS, all traffic between a browser and the web server, including passwords, is encrypted.
+VPN
+Use VPN to provide access for external users. If possible, avoid open access to Webstation from outside.
+Passwords
+Change the default passwords. To create strong passwords, use a password generator, for example, available here. If a company uses Active Directory, setting up Rapid SCADA user authentication based on Active Directory enhances system security.
+Passwords to be set:
+• User passwords in the Users table of the project.
+• Password for connecting to the Server application in the Communicator and Webstation settings.
+• Agent password, located in the ScadaAgentConfig.xml file.
+• Password for connecting to the Agent application in the deployment profile.
+Note: The user table stores password hashes. A password cannot be recovered from a hash code. XML configuration files contain encrypted passwords that are decrypted by applications during execution.
+
+Configuration
+Configuration Basics
+Configuration Database
+Device Polling
+Channels
+Scripts and Formulas
+Views
+Table Views
+User Management
+
+Configuration Basics
+Creating Project
+Configuration of Rapid SCADA is performed on a project basys. A project is a set of files in various formats that are stored in the project directory. To create and edit projects, use the Administrator application. When Administrator starts, the Start Page opens, which contains the buttons to create a new or open an existing project (see Figure 1).
+Figure 1. Start page
+Figure 1. Start page
+Figure 2. Project creation form
+Figure 2. Project creation form
+Pay attention to the Template field on the project creation form (see Figure 2). The template defines the initial configuration that is added to the project. Another existing project can be used as a template.
+Project Structure
+The structure of the Rapid SCADA project is displayed in the project explorer, which is located on the left side of the main Administrator window. The project consists of the following main parts (see Figure 3):
+• The Configuration Database consists of tables. It is a general structured description of the automated system. The detailed settings refer to the corresponding applications.
+• The Views section contains view files that are displayed by the Webstation application, and report configuration files. Views examples are mimic diagrams, tables, maps and dashboards.
+• Server application settings.
+• Communicator application settings.
+• Webstation web application settings.
+Figure 3. Project structure
+Figure 3. Project structure
+An instance is a set of Rapid SCADA applications running the same project and installed on the same computer.
+A single project can include multiple instances that exchange data. The Administrator application can connect to remote servers, so configuration and control of Rapid SCADA can be carried out by an engineer using one workstation.
+Configuration Sequence
+Starting to work with Rapid SCADA, it is recommended to follow the general configuration sequence described below. Having obtained some experience, better understanding the dependencies between the applications, the sequence can be varied to increase efficiency.
+1. Create a new or open an existing project in the Administrator application.
+2. Add objects, communications lines and devices into the configuration database. To create communication lines and devices it is recommended to use wizards that are opened using the  and  buttons located on the Administrator's toolbar.
+3. Check that the added communication lines and devices are present in the Communicator settings. If necessary, create them by selecting the Synchronize menu item from the context menu of the Communication Lines node in the project explorer.
+4. Configure device polling in Communicator.
+5. Create channels in the configuration database. It is recommended to use the wizard opened by the  button.
+6. Create views and specify them in the Views table of the configuration database.
+7. Upload the project for execution by the  button.
+
+Configuration Database
+Database Model
+The configuration database is a part of the project, consisting of tables and common to all project instances. The applications included in Rapid SCADA use the information from the configuration database in conjunction with their settings.
+The configuration database is edited using the Administrator application. The edited copy of the configuration database is in XML file format. When a project is uploaded to a server for execution, the configuration database is converted into a special DAT format.
+The configuration database consists of tables, which in turn are composed of columns and rows. Each table belongs to one of the following groups:
+1. Primary tables. This group contains the tables that define the operating of a particular project.
+2. Secondary tables. During the development of the project, minor additions are made to the tables in this group.
+The following is a list of configuration database tables with a brief description.
+Primary Tables
+Objects
+Contains logical objects that are used to structure information in the system and manage access rights. Objects can be hierarchical
+Communication lines
+Describes communication lines that group devices and determine the polling order
+Devices
+Contains a list of physical or virtual devices
+Channels
+Channels are necessary for storing measured data, mathematical calculations and sending commands
+Limits
+Contains a list of limits for channel values
+Views
+Contains view attributes and specifies the structure of the view tree
+Roles
+Contains a list of user roles. A role is a set of access rights. Do not change or delete the built-in roles
+Role inheritance
+Allows to configure a parent role based on the rights of child roles
+Object rights
+Defines rights of custom roles on objects
+Users
+Contains a list of users with their roles. The Password column stores password hashes
+Secondary Tables
+Archive kinds
+Dictionary of archive kinds
+Archives
+Dictionary of archives. The archives in the table correspond to the archives in the Server settings
+Channel statuses
+Dictionary of channel statuses. Among other things, it sets the match between a channel status and some event parameters
+Channel types
+Dictionary of channel types
+Data types
+Dictionary of data types
+Device types
+Dictionary of device types (drivers)
+Formats
+Dictionary of formats used when displaying channel and command values
+Quantities
+Dictionary of quantities
+Scripts
+Dictionary of scripts and formulas used in calculating channel and command values
+Units
+Dictionary of units
+View types
+Dictionary of view types
+Editing Database
+The configuration database tables are related to each other, that is, a cell of one table can refer to a record of another table. For example, a device refers to a communication line to which it is connected. Therefore, it is efficient to edit tables in a certain sequence. For tables from the Primary tables group, enter data in order starting with the Objects table and ending by the Users table.
+The Administrator application provides tools that make editing the configuration database faster and handy:
+• The search and replace dialog is called by the  button, which is located on the application toolbar, or by the keyboard shortcut Ctrl + F.
+• Filtering a table hides unnecessary rows. If the table is filtered, search and replace is performed only on the table rows that are displayed. The filter window is called by the  button.
+• When editing table cells, use the functions cut Ctrl + X, copy Ctrl + C and paste Ctrl + V. That functions can also be applied for cells whose values ??are selected from a drop-down list.
+• Clicking a column header sorts the rows in the table by the values in that column.
+• If the properties button is displayed on the table toolbar, then the rows for that table can be edited using a dialog form.
+• The wizards, which are called up with the ,  and  buttons located on the main toolbar, help to quickly fill out the Communication lines, Devices and Channels tables.
+• The channel cloning tool is useful for populating the Channels table if the system contains many similar devices. The tool is available through the main menu Tools > Project Tools > Clone Channels.
+• Using the table import and export functions, you can transfer previously completed work between projects. XML, CSV and DAT data formats are supported. The functions are available in the main menu section Tools > Project Tools.
+• The integrity check tool helps ensure that the relations between the tables are valid and that table foreign keys point to existing records.
+
+Device Polling
+Interaction with devices is performed by the Communicator application, which requests data and sends commands to devices, acting as a master or slave. The polled devices are controllers, input/output modules, metering devices, as well as external data sources, which are also conventionally called devices. All devices belong to communication lines that are independent and operate in parallel.
+Devices are polled using various communication protocols, such as Modbus, OPC or MQTT. Each protocol is implemented by a corresponding driver. Some drivers are installed by default during the Rapid SCADA installation process. Other drivers can be installed additionally.
+Communication Line Options
+Figure 1 shows an example of setting up the main options of a communication line. Pay attention to the communication channel settings. A communication channel defines a physical interface or network protocol used to poll devices. The following communication channels are supported: Serial port, TCP client, TCP server, UDP and MQTT client. In some cases, if device connection is implemented directly by a driver (for example, OPC), the communication channel should be left unspecified.
+Figure 1. Main line options
+Figure 1. Main line options
+Custom line options are specific to the driver being used. They are configured using a user interface implemented by the driver, or can be set according to instructions for a certain device type.
+Device Options
+In the Device Polling section, individual polling options are configured for each device related to the communication line.
+Figure 2. Device polling options
+Figure 2. Device polling options
+The table below clarifies the device polling options.
+Option
+Description
+Active
+Indicates that the device is being polled
+Poll only on command
+To poll the device, send a command
+Bound to the configuration database
+If the option is set, the device tags are bound to the channels of the configuration database, and the received data is sent to the Server application
+Number
+Device number. It must match the device number in the configuration database
+Name
+Device name
+Driver
+A driver that implements the communication protocol supported by the device
+Numeric address
+Device address as a number
+String address or host name
+Device address as a string. This is usually an IP address
+Timeout
+Duration of waiting for a response from the device in milliseconds
+Delay
+Delay after receiving data in milliseconds
+Time and Period
+If both options are zero, the device is polled continuously and cyclically. If the time is specified and the period is zero, the device is polled once a day at the specified time. If the period is greater than zero, the device is polled periodically, starting at the specified time
+Command line
+Additional options determined by the driver and described in its instructions
+Options
+Similar to command line, but more structured
+If the device requires device type-specific options, click the Properties button to then to configure them in a dialog window provided by the driver. The Reset button restores the device polling options to the default values determined by the selected driver.
+Synchronizing Settings
+The synchronization feature helps create communication lines and devices in the Communicator settings based on data from the Communication lines and Devices tables of the configuration database. And vice versa, fill the configuration database tables based on the Communicator settings. To open the synchronization dialog, in the project explorer, right-click the Communication Lines node or the node of a specific line, then select Synchronize from the context menu.
+Figure 3. Synchronize line and devices
+Figure 3. Synchronize line and devices
+
+Channels
+A channel is an entity that has a number and name, with which current and historical data, as well as events, are associated. Synonyms in other systems: variable and tag.
+Channel Properties
+A channel can be edited directly in the Channels table, as well as using the channel properties form. To open the properties form, select a channel in the table and click the  button or double-click a table row. Below are screenshots of the channel properties form and under each image the specifics of setting the corresponding properties are described.
+Figure 1. General channel properties
+Figure 1. General channel properties
+If uncheck the Active checkbox, the channel will be excluded from processing. The Code field is intended for integration with third-party systems and does not affect the operation of Rapid SCADA applications. If Data type is not specified, then the Double type is used. If Data length is specified and its value is greater than 1, then the Server application creates several channels with sequential numbers. The Channel types are described in the table of the same name. The Tag Code string field is intended for linking the channel and device tag in Communicator. The Tag number numeric field works similarly, but is deprecated. The use of formulas is described in the next article.
+Figure 2. Channel display properties
+Figure 2. Channel display properties
+The Format field determines the display of channel values ??in the user interface, but does not affect saving data to the archive. Specify a Command format if the values ??in the command sending window should be formatted differently than when viewed.
+Figure 3. Channel limits
+Figure 3. Channel limits
+A limit record can be used by one or more channels. In the second case, the limit is marked as shared. If the Bound to channels option is enabled when creating a limit, then the actual values ??of the limit are the values ??of the channels whose numbers were specified when creating it.
+Figure 4. Channel properties. Archives
+Figure 4. Channel properties. Archives
+It is possible for a channel to specify in which archives its data is stored. If archives are not selected, that is, the archive mask is empty or equal to 0, then the channel data is stored in the default archives.
+Figure 5. Channel properties. Events
+Figure 5. Channel properties. Events
+On the Events page, set the criteria by which events related to the channel should be recorded in the event archive.
+Tools
+To create channels, there is a wizard (see Figures 6-8), which is called by the  button located on the Administrator application toolbar. However, automatic creation of channels must be supported by the driver of the device for which the channels are created, otherwise the channels are created manually. The channel creation wizard starts after device polling is configured in the Communicator application.
+Figure 6. Channel creation wizard. Step 1
+Figure 6. Channel creation wizard. Step 1
+Figure 7. Channel creation wizard. Step 2
+Figure 7. Channel creation wizard. Step 2
+Figure 8. Channel creation wizard. Step 3
+Figure 8. Channel creation wizard. Step 3
+The cloning tool (see Figure 9) allows to quickly create similar channels based on existing ones. On the cloning form, specify the source and destination channel numbers. You can also select a new object and device for the cloned channels. The feature of updating channel numbers in formulas works if the channel number is used as an argument in the following functions: N(), Val(), Stat(), SetVal(), SetStat() and SetData().
+Figure 9. Cloning channels
+Figure 9. Cloning channels
+Tools for importing and exporting configuration database tables (see Figures 10 and 11) make it easier to use previously made work from other projects. DAT, XML and CSV table formats are supported. To limit the range of data that is imported and exported, specify the start and end IDs.
+Figure 10. Import table
+Figure 10. Import table
+Figure 11. Export table
+Figure 11. Export table
+The cloning, import and export tools are accessed through the Tools > Project Tools menu of the Administrator application.
+
+
+Scripts and Formulas
+The Server application has a built-in engine for executing user scripts. Scripts are used to calculate channel values and statuses, as well as to calculate command values.
+Scripts are written to the Scripts table of the configuration database. A project created using a template already contains an initial set of scripts, which can be used as examples for developing your own scripts. Variables and functions implemented in the Scripts table are then called in the Input Formula and Output Formula columns of the Channels table. To perform formula calculations for a channel, select the checkbox in the Formula Enabled column.
+Script Creation Rules
+General rules for writing and using scripts:
+1. Scripts are written according to the syntax of C# language. Various .NET framework classes are available, such as Math, DateTime, and File.
+2. New constants, fields, properties, and methods are added to the Scripts table and become available in channel formulas.
+3. If at least one script or formula contains an error, Server operation is impossible. Information about errors in scripts is written in the Server application log.
+Rules for calculating channel formulas:
+1. An input formula for channels of the Input and Input/Output types is calculated only when Server receives new data for that channels. Use the mentioned types of channels if the data comes from devices.
+2. An input formula for channels of the Calculated and Calculated/Output types is calculated continuously at each iteration of the main Server loop. The calculation sequence is from smaller to larger channel numbers. Calculated channel types are used if the value and status of a channel are calculated based on data of other channels.
+3. An output formula for channels of the Input/Output, Calculated/Output and Output types is calculated when a command is sent to the corresponding channel.
+4. A channel status after calculating an input formula for channels of the Input and Input/Output types is equal to the status of the data transferred to Server, if the status calculation is not explicitly specified in the formula.
+5. For channels of the Calculated and Calculated/Output types, the status is set to Defined if the status calculation is not explicitly specified in the formula.
+6. If an input formula contains the ";" symbol, it is split into two parts: the first part calculates the channel value, and the second part calculates the channel status.
+7. If a channel has specified limits, the channel status is recalculated taking the limits into account after calculating the channel's input formula.
+8. Formulas must return values of certain data types, described below.
+Channel input formulas return data of the following types:
+Data Type
+Description
+double
+Channel value
+CnlData
+Channel value and status
+long
+64-bit integer value of a channel whose data type is set to Integer in the Channels table
+string
+String value of a channel whose data type is set to ASCII string or Unicode string in the Channels table
+If a channel's input formula returns a data type other than those listed in the table above, the value returned by the formula is cast to the appropriate type based on the data type of the channel. The part of the channel input formula that calculates the channel status must return an integer value of type int.
+Channel output formulas return data of the following types:
+Data Type
+Description
+double
+Command value. To cancel a command, formula must return double.NaN
+CnlData
+Command value. To cancel a command, formula must return CnlData.Empty
+byte[]
+Binary command data. To cancel a command, formula must return null
+string
+String command data. Converted by Server into a byte array
+Available Variables
+The scripting engine provides the following built-in variables:
+Variable
+Data Type
+Description
+Timestamp
+DateTime
+Timestamp of the processed data (UTC)
+IsCurrent
+bool
+Processed data is current data
+CnlNum
+int
+Channel number for which the formula is calculated
+Channel
+Cnl
+Properties of the channel for which the formula is calculated
+ArrIdx
+int
+Index of the processed array element
+Cnl, CnlVal
+double
+Channel value transmitted to Server before the calculation
+CnlStat
+int
+Channel status transmitted to Server before the calculation
+CnlData
+CnlData
+Channel data transmitted to Server before the calculation
+Cmd, CmdVal
+double
+Command value transmitted to Server before the calculation
+CmdData
+byte[]
+Command data transmitted to Server
+CmdDataStr
+string
+Command data as a string
+Available Functions
+The scripting engine provides the following built-in functions:
+Function
+Data Type
+Description
+N(n)
+int
+Returns the channel number n. Used in channel cloning
+Val()
+double
+Actual value of the formula channel
+Val(n)
+double
+Actual value of the channel n
+SetVal(n, val)
+double
+Sets the current value of the channel n
+Stat()
+int
+Actual status of the formula channel
+Stat(n)
+int
+Actual status of the channel n
+SetStat(n, stat)
+int
+Sets the current status of the channel n
+Data()
+CnlData
+Actual data of the formula channel
+Data(n)
+CnlData
+Actual data of the channel n
+SetData(n, val, stat)
+double
+Sets the current value and status of the channel n
+SetData(n, cnlData)
+double
+Sets the current data of the channel n
+NewData(val, stat)
+CnlData
+Creates a new channel data instance
+PrevVal()
+double
+Previous value of the formula channel
+PrevVal(n)
+double
+Previous value of the channel n
+PrevStat()
+int
+Previous status of the formula channel
+PrevStat(n)
+int
+Previous status of the channel n
+PrevData()
+CnlData
+Previous data of the formula channel
+PrevData(n)
+CnlData
+Previous data of the channel n
+Time()
+DateTime
+Actual timestamp of the formula channel
+Time(n)
+DateTime
+Actual timestamp of the channel n
+PrevTime()
+DateTime
+Previous timestamp of the formula channel
+PrevTime(n)
+DateTime
+Previous timestamp of the channel n
+Deriv(n)
+double
+Time derivative of the channel n
+Functions from Project Template
+In a project that was created based on a standard template, the Scripts table contains the following functions:
+Function
+Data Type
+Description
+GetBit(val, n)
+double
+Returns the n-th bit of the specified value
+GetBit(cnlData, n)
+CnlData
+Returns a channel data consists of the n-th bit of the value and the channel status
+GetBits(val, n, len)
+double
+Returns specified bits of the given value
+GetBits(cnlData, n, len)
+CnlData
+Returns a channel data consists of the specified bits of the value and the channel status
+SetBit(val, n, isOn)
+double
+Sets the n-th bit of the specified value
+SetBit(cnlData, n, isOn)
+CnlData
+Sets the n-th bit of the channel value, keeping the channel status unchanged
+GetByte(val, n)
+double
+Returns the n-th byte of the specified value
+DataRel(offset)
+CnlData
+Channel data relative to the current channel
+SetData()
+double
+Sets the current channel data according to the command value
+GetDefaultData(val)
+CnlData
+Gets the default data of the calculated channel
+Now()
+double
+The current date and time as a floating-point number. Uses the server time zone
+UtcNow()
+double
+The current date and time as a floating-point number. Uses universal time zone (UTC)
+UnixTime()
+long
+The current Unix time in seconds
+EncodeDate(dateTime)
+double
+Converts the specified date and time to a channel value of Double type
+DecodeDate(val)
+DateTime
+Converts the channel value to a date and time
+EncodeAscii(s)
+double
+Converts an ASCII string, up to 8 characters long, to a floating point number
+EncodeUnicode(s)
+double
+Converts a Unicode string, up to 4 characters long, to a floating point number
+DecodeAscii(val)
+string
+Converts the specified value to an ASCII string up to 8 characters long
+DecodeUnicode(val)
+string
+Converts the specified value to an Unicode string up to 4 characters long
+Substring(s, startIndex, length)
+string
+Extracts a substring from the string with bounds checking
+SplitAscii(getStringFunc)
+string
+Splits an ASCII string to store by several channels
+SplitUnicode(getStringFunc)
+string
+Splits an Unicode string to store by several channels
+EverySec(getDataFunc)
+CnlData
+Executes the specified function every second
+EveryMin(getDataFunc)
+CnlData
+Executes the specified function every minute
+EveryHour(getDataFunc)
+CnlData
+Executes the specified function every hour
+CountPulse(cnlNum)
+double
+Counts a pulse of the specified channel
+HourStarted()
+bool
+Indicates that a new hour has started. The result is true once for each channel
+DayStarted()
+bool
+Indicates that a new day has started. The result is true once for each channel
+MonthStarted()
+bool
+Indicates that a new month has started. The result is true once for each channel
+Additional scripts, including those for calculating averages, are available on GitHub.
+Debugging Scripts
+When developing your own scripts, follow the syntax rules and check that the scripts work correctly. If the Server service failed to compile scripts at startup, error information is displayed in the Server operation log ScadaServer.log, and the compiled source code is available in the CalcEngine.cs file, which is located in the Server log directory. To develop complex formulas, we recommend using Microsoft Visual Studio or Visual Studio Code.
+Examples of Formulas
+Example 1: Linear transformation of a channel value received from a device. The formula is used for a channel of the Input type.
+10 * Cnl + 1
+Example 2: The sum of the values of channels 101 and 102. The status is extracted from channel 101. The formula is used for a channel of the Calculated type.
+Val(101) + Val(102); Stat(101)
+Example 3: The formula that is used for a channel of calculation type extracts the 0th bit from the data of channel 105.
+GetBit(Data(105), 0)
+Example 4: The formula increments the counter by one every minute, resetting the counter at the beginning of each hour.
+EveryMin(() => HourStarted() ? 0 : Val() + 1)
+
+Views
+View is a form of data representation in the Webstation application. There are 3 types of views supported by default: table views, mimic diagrams and web pages. Support for other types of views can be added by installing additional plugins. A complete list of implemented view types is contained in the View types table of the configration database.
+Creating Views
+View files are located in the Views section of a project. To create a file or folder in the views section, right-click on the explorer node in this section, then select New File or New Folder from the context menu that appears (see Figure 1).
+Figure 1. View context menu
+Figure 1. View context menu
+When creating a file, select a view type in the dialog box, specify a file name and click OK (see Figure 2). The created file will appear in the project explorer. Double-clicking opens the view in an editor corresponding to the file extension.
+Figure 2. View creation dialog
+Figure 2. View creation dialog
+There are specialized editor applications for table views and mimic diagrams. Other types of view files are in XML format and can be edited using general-purpose text editors.
+View Table
+After a view file is created, it must be registered in the configuration database in the Views table, as shown in Figure 3. Subfolders in which the view files are located must also be listed in the table in order to assign access rights to them.
+Figure 3. Views table
+Figure 3. Views table
+Path to a view is relative to the views directory. Regardless of the operating system used on the server, the path separator is a backslash. Some views, such as Web page views, do not have a view file. For such views, specify a path that determines the location of the view in the view explorer of the Webstation application.
+View Type is selected from a drop-down list. If a view file has an extension registered in the View types table, then view type does not need to be specified because it will be determined automatically.
+An Object whose data is displayed by the view must be specified to configure access rights.
+The Arguments column contains additional view parameters that that the behavior of the view. For views of the Web page type, a page address is specified as arguments.
+A Title specified for a view is displayed in the view tree. If the title is blank, the file name is used as the title.
+The Order numeric field determines the order in which views are processed when generating the view explorer. If no order is specified, views are processed in the order of their IDs.
+The Hide checkbox allows to hide a view from the view explorer. This is useful for auxiliary views that are opened by a link from other views.
+Figure 4. View explorer
+Figure 4. View explorer
+Based on the view table under consideration, the view explorer is populated, which is shown in Figure 4.
+
+Table Views
+A table view (see Figure 1) is designed to display historical data for a day with a specified period, as well as current data. Clicking a table item opens a chart of the channel associated with the item. The  button brings up a dialog for sending a command.
+Figure 1. Table view
+Figure 1. Table view
+Creating and Editing
+One of the advantages of table views is that they are easy to create. Navigate to the Views section of a project, right-click on the desired folder and select New File from the context menu. In the dialog box that opens (see Figure 2), select the Table View type, specify a file name and click OK. The created file will appear in the project explorer. Double-clicking opens the view in Table Editor (see Figure 3).
+Figure 2. View creation dialog
+Figure 2. View creation dialog
+Figure 3. Table editor
+Figure 3. Table editor
+The left panel of the editor contains a list of channels grouped by devices. The main part of the window displays the contents of the table view. Each view item is associated with a device or channel. To add an item to the view, select the corresponding tree node in the left pane, then click the  button, press Enter, or double-click the tree node. The  button adds an empty line. If the configuration database has changed, click the  button located on the application toolbar to refresh devices and channels.
+If the Auto Text checkbox is checked for a view item, the device or channel name is automatically used as the item's text. If this name is later changed in the configuration database table, there is no need to update the view.
+The Hide checkbox removes an item from the displayed table. However, the channel numbers corresponding to the hidden element continue to be used by the event filter by view.
+After creating a table view, it must be registered in the configuration database in the Views table, as described in the previous article.
+View Options
+A window containing the table view options (see Figure 4) is called by the  button located on the editor toolbar. The options are set for the certain view being edited.
+Figure 4. Table view options
+Figure 4. Table view options
+Option
+Description
+Archive code
+Specifies the archive from which historical data is retrieved
+Table period
+Time step used to generate the table view columns
+Chart arguments
+Arguments separated by & that are added to the address bar when a chart opens
+Example of arguments for the standard Chart plugin: archive=Min&gap=90, where archive is the archive code, gap is the distance between points connected by a line (in seconds).
+Example of arguments for Chart Pro Plugin: profile=PlgChartPro.xml, where profile is the name of the chart profile file.
+If the Use default options checkbox is checked, the archive code and period are loaded from the web application configuration file ScadaWebConfig.xml. The TableArchiveCode and TablePeriod options located in the Main group of the CustomOptions section are used.
+
+
+User Management
+Creating Users
+Creating, editing and deleting users is performed in the Administrator application in the Users table (see Figure 1).
+Figure 1. Users table
+Figure 1. Users table
+Users with IDs from 1 to 12 are created by default from the project template. The ScadaWeb and ScadaComm users are intended to connect the Webstation and Communicator client applications to the Server application. The admin and guest users who use the built-in roles are intended to log in to the system. The alex, john and maria users who use custom roles are created as an example.
+Rights Assignment
+Rights are assigned to roles on objects. Note that rights are assigned only for custom roles. For built-in roles, permission check is already implemented in applications. A role is a named set of rights.
+Before assigning rights, fill in the Objects and Roles tables (see Figures 2 and 3). Next, specify the rights in the Object rights table (see Figure 4). Objects can relate to each other hierarchically (see Figure 5). If a top-level object has certain permissions, they are inherited by lower-level objects.
+Figure 2. Objects table
+Figure 2. Objects table
+Figure 3. Roles table
+Figure 3. Roles table
+Figure 4. Object rights table
+Figure 4. Object rights table
+Figure 5. Object hierarchy
+Figure 5. Object hierarchy
+Built-in Roles
+Built-in roles whose permissions are hard-coded into the applications are listed in the following table.
+ID
+Name
+Description
+0
+Disabled
+Access denied
+1
+Administrator
+Full access
+2
+Dispatcher
+Can view information and send commands
+3
+Guest
+Can view information
+4
+Application
+Interacts with the server
+Features of the built-in roles:
+• Their IDs are from 0 to 4.
+• They apply to all objects.
+• Cannot be changed.
+Custom Roles
+Custom roles are roles created by the project developer. In the example above, the custom roles are My role 1, My role 2, and My role 3.
+It is recommended to assign IDs to custom roles starting from 101. The Code field of a role is intended for integration with third-party systems and databases. If integration is not used, the code can be left blank.
+By using the role inheritance mechanism, it is possible to significantly reduce the number of records that are added to the Object rights table.
+In the Role inheritance table shown in Figure 6, the child role My role 3 inherits from the parent roles My role 1 and My role 2 the sum of the rights of both.
+Figure 6. Role inheritance
+Figure 6. Role inheritance
+To check whether the rights are configured properly, open the Rights Matrix window (see Figure 7), which is called by the  button located on the toolbar of the Administrator application. The figure below shows how role inheritance works.
+Figure 7. Right matrix
+Figure 7. Right matrix
+
+Modules
+Chart Pro Plugin
+Dashboard Plugin
+Elastic Report Plugin
+Map Plugin
+Notification Plugin
+Automatic Control Module
+Database Export Module
+Rapid Gate Module
+Database Import Driver
+Modbus Slave Driver
+Telegram Driver
+
+
+Chart Pro Plugin
+Overview
+Chart Pro Plugin is the additional plugin for the Webstation application extends the capabilities of Rapid SCADA charts: adds scaling, displaying of multiple charts, export to PNG and PDF. Download the plugin using the link. The appearance of Chart Pro Plugin is shown in the following figure.
+
+Installation
+Chart Pro Plugin is installed according to the instructions. Follow additional steps during installation:
+• Copy the PlgChartPro.xml and PlgChartPro_Config.xml files into your project. The PlgChartPro_Reg.xml file will be created when the registration key is saved.
+  
+• In the Webstation application options, in the Plugin Assignment section, select the PlgChartPro plugin.
+  
+Configuring
+Chart Pro Plugin is configured by default. Plugin settings are saved in the PlgChartPro.xml and PlgChartPro_Config.xml files, which can be edited manually if necessary.
+The PlgChartPro_Config.xml file contains a list of profiles. A profile is a set of plugin settings that can be selected by a user on the chart web page. The PlgChartPro.xml file contains a chart profile, which includes display options and data options.
+To create a new profile, copy the PlgChartPro.xml file with a new name and edit it. Then specify the created profile in the PlgChartPro_Config.xml file.
+In addition to the configuration files, the chart display is determined by a query string, which parameters are given in the table below. The query string has the following form: http://localhost:10008/ChartPro/ChartPro?cnlNums=101-103&startDate=2023-09-16&mode=fixed&period=2&periodMin=60&title=Demo&profile=PlgChartPro.xml
+Parameter
+Data Type
+Description
+cnlNums
+Range of integers separated by hyphens and commas
+Channel numbers displayed on the chart
+startDate
+Date in YYYY-MM-DD format
+Start date of the displayed data. If not specified, the current date is used
+mode
+fixed | rolling
+Chart mode: fixed or rolling. If not specified, fixed mode is used
+period
+Integer
+Chart period in days relative to the start date. Can be either positive or negative. Used in fixed mode
+periodMin
+Integer
+Chart period in minutes in rolling mode
+title
+String
+Chart title. If not specified, it is generated automatically
+profile
+String
+Chart profile file name. If not specified, the first profile from the list is used
+In the fixed mode, the plugin displays a chart for a selected period of time. The chart data is automatically updated by adding new values to the right side of the chart.
+In the rolling mode, the plugin displays a graph from the current moment to the specified depth. The chart data is automatically updated, while the chart shifts from right to left.
+The following figure helps to understand the layout of the chart in order to change the plugin configuration.
+
+View Mode
+Chart Pro Plugin supports the view mode, in which a chart node is added to the view tree of Webstation. To display the chart as a view, add the following row to the Views table:
+
+The Path field contains the path in the view tree. The View Type field should be set to Chart Pro. The view arguments correspond to the query string parameters described above.
+
+Rapid SCADA Docs
+
+
+Dashboard Plugin
+Overview
+Dashboard Plugin displays useful widgets on dashboards: charts, current data and arbitrary frames, for example, CCTV camera stream. Settings of each dashboard allow to specify column count and widget aspect ratio. Download the plugin using the link. The appearance of Dashboard Plugin is shown in the following figure.
+
+Installation
+Dashboard Plugin is installed according to the instructions. No unusual actions are required during installation.
+Configuring
+Adding Dashboards
+Configuration of each dashboard is stored in a separate XML file. The dashboard example, Dashboard1.xml, is included in the plugin installation package. Dashboard files should be located in the views directory.
+In order to display dashboard nodes in the explorer tree of Webstation, perform the following settings in the project:
+1. Create and edit a dashboard file in the views directory.
+2. Specify the dashboard path in the Views table of the configuration database.
+
+
+It is required to explicitly specify the view type because the Webstation application cannot automatically determine the type based on the xml file extension.
+Dashboard File Structure
+A dashboard consists of widgets. The layout of widgets on the dashboard is controlled by the Bootstrap grid system. Widgets are arranged in rows, each of which can contain up to 12 widgets. For a widget, you can set the width from 1 to 12, so that the total width of the widgets in the row is equal to 12. If the widget width is not specified, it is calculated automatically. The breakpoint specifies the web page width, which determines how the widgets are positioned. If the page is wider than the breakpoint, the widgets are displayed in a row; otherwise, the widgets are displayed one below the other.
+Consider the contents of a dashboard configuration file:
+<?xml version="1.0" encoding="utf-8" ?>
+<DashboardView>
+  <DashboardOptions>
+    <!-- Widget AspectRatio = Width / Height -->
+    <AspectRatio>1.33</AspectRatio>
+    <!-- Breakpoint: ExtraSmall | Small | Medium | Large | ExtraLarge | ExtraExtraLarge -->
+    <Breakpoint>Small</Breakpoint>
+  </DashboardOptions>
+  <Widgets>
+    <!-- The total width of the columns in a line is 12 -->
+    <Row>
+      <Widget type="Chart" columnWidth="5" cnlNums="101,102" />
+      <Widget type="Chart" columnWidth="4" cnlNums="101,103" mode="fixed" period="-2" title="Sample Chart" profile="PlgChartPro.xml" />
+      <Widget type="CurData" columnWidth="3" cnlNums="101-105" title="Sample Data" />
+    </Row>
+    <Row columnCount="2">
+      <Widget type="View" viewID="2" />
+      <Widget type="CustomUrl" url="https://www.youtube.com/embed/xAieE-QtOeM" />
+    </Row>
+  </Widgets>
+</DashboardView>
+The DashboardOptions section contains common dashboard parameters:
+AspectRatio - ratio of widget width to its height,
+Breakpoint determines the web page width to switch widget layout.
+The Widgets section contains a list of widgets that are displayed on a dashboard. The dashboard can contain an arbitrary number of widgets, but no more than 12 in one row. Please note that too many widgets on one dashboard can slow down the performance of the web application.
+The attribute of the Row element:
+columnCount - number of columns to display widgets of a given row. If the columnCount attribute is specified for the row, then the columnWidth attribute is not required for widgets in that row.
+The main attributes of the Widget element:
+type - widget type,
+columnWidth - widget width from 1 to 12,
+cnlNums - channel numbers.
+Widgets of the following types are supported:
+Chart - a chart of the specified channels,
+CurData - a table contains current data of the specified channels,
+View - a view having the specified ID,
+CustomUrl - custom web page.
+Widgets of the Chart type support attributes that match the query string parameters described in the Chart Pro Plugin documentation. When events are filtered by view, the filter uses the channel numbers specified in the cnlNums attributes of the widgets.
+
+Elastic Report Plugin
+Overview
+Elastic Report Plugin allows to generate reports according to a custom configuration. Using this plugin, you can build almost any desired report. A user simply selects the period and clicks the generate report button. Report configurations are created by an administrator. Download the plugin using the link.
+Installation
+Elastic Report Plugin is installed according to the instructions. During installation, complete the following additional step: copy the PlgElasticReport.xml file from the plugin distribution into your project. The file should be displayed in the project explorer under the Webstation > Configuration Files node.
+Configuring
+A report consists of a set of sections, which are listed in the output document, one by one. Each section has its own type, parameters, and data binding. In addition, the report has the general parameters that affect all sections. The same report can be generated in a variety of formats. Currently supported PDF, Excel and HTML formats. The appearance of the same report, generated in different formats may slightly differ.
+Report Form
+Each report form requires the creation of a separate configuration file in XML format. The configuration file specifies the report formatting and determines the binding of report data to channels. This file should be saved in the views directory or a subdirectory within the project.
+
+Configuration files may be edited using any text editor. For example, the free editor Notepad++ is convenient for working with XML files.
+An example report file ElasticReport1.xml is contained in the plugin installation package. This example includes a detailed description of the options and demonstrates the generation of report sections of all possible types.
+The main elements of the report configuration file:
+• The InputOptions element contains options for the input report form, with which a user enters the report parameters and starts generating the document.
+• The OutputOptions element contains formatting options for the generated document.
+• The Document element defines the content of the report.
+– The DocumentOptions element specifies basic options that apply to the entire document.
+– The Section element describes a report section containing data. A report includes one or more sections of various types.
+The supported section types:
+• The TimeData section displays channel data for the selected time period. Channels are displayed horizontally, timestamps are displayed vertically.
+• The TimeTime section displays data of one channel in a compact form. Timestamps are displayed in the horizontal and vertical section headers.
+• The DataData section displays data in a table form. Each cell can be linked to its own channel.
+The plugin provides the generation of reports based on historical data. Reports on current data and events are not supported. When choosing a historical archive for a report, it is recommended to give preference to an archive with a data writing period that matches or is close to the step of the report sections. This will avoid fetching unnecessary data.
+Report List
+The PlgElasticReport.xml configuration file contains a list of reports divided into groups, which are displayed on the Main Menu > Reports page. Example of file contents:
+<?xml version="1.0" encoding="utf-8" ?>
+<PlgElasticReport>
+  <ReportGroup name="Elastic Reports" isPublic="false" objNum="0">
+    <ReportItem reportID="1" isPublic="false" objNum="0" config="Reports\ElasticReport1.xml" prefix="MyRep" cnlNums="">My report</ReportItem>
+  </ReportGroup>
+</PlgElasticReport>
+The ReportGroup element attributes:
+name - the display name of the report group;
+isPublic - a value indicating whether the group is public, that is, available to all users;
+objNum - the number of the object to which reports of the group belong. Restricts the group visibility according to a user's access rights to the object.
+The ReportItem element attributes:
+reportID - the report identifier, unique within the configuration file;
+isPublic - a value indicating whether the report is public, that is, available to all users;
+objNum - the number of the object to the report belong. Restricts the report visibility according to a user's access rights to the object;
+config - the path of the report form configuration file relative to the views directory;
+prefix - the file name prefix used when downloading the report;
+cnlNums - the predefined channel numbers for which the report is generated.
+Styling
+You can customize your own report styles, including fonts, colors, cell sizes, etc. For each report format, styles are configured separately.
+To load custom styles, in the OutputOptions section of the report configuration, set the StyleSheet parameter to Custom. It is possible to create multiple custom style files with different suffixes. The StyleSheet parameter contains the suffix of the stylesheet file to load.
+PDF Styles
+The PdfStyleDefault.xml and PdfStyleCustom.xml files specify the formatting of reports in PDF format. These files are located in the web application directory ScadaWeb\wwwroot\plugins\ElasticReport\templates. The PdfStyleDefault.xml file contains the default styles and should remain unchanged. Custom styles are added to the PdfStyleCustom.xml file. When creating custom styles, you can inherit new styles from existing ones or override existing styles.
+Excel Styles
+Similarly, the ExcelStyleDefault.xml and ExcelStyleCustom.xml files, located in the same directory, specify the formatting of reports in Excel format. The ExcelStyleDefault.xml file contains default styles and should remain unchanged. Custom styles are added to the ExcelStyleCustom.xml file. Please note that PDF and Excel style file formats are different.
+HTML Styles
+The html-style-default.scss and html-style-custom.css files define the display of reports in HTML format. The files are located in the ScadaWeb\wwwroot\plugins\ElasticReport\css directory. Custom styles are added to the html-style-custom.css file using Cascading Style Sheets (CSS) rules.
+Fonts
+Fonts in PDF Format
+When generating reports in PDF format, the Arial font is used by default. If the required font is not available in the operating system, it is replaced with the built-in Segoe WP font. To change the report font, edit the styles file.
+The font search is performed using the following algorithm:
+1. The search directory is selected. On Windows, the search is performed in the C:\Windows\Fonts directory, on Linux in the /usr/share/fonts/truetype directory
+2. Based on the font name (FontFamily), the required font file names are determined.
+a. Regular font: FontFamily.ttf, FontFamily-Regular.ttf
+b. Bold font: FontFamilyb.ttf, FontFamilybd.ttf, FontFamily-Bold.ttf
+c. Italic font: FontFamilyi.ttf, FontFamily-Italic.ttf, FontFamily-Oblique.ttf
+d. Bold italic font: FontFamilybi.ttf, FontFamily-BoldItalic.ttf, FontFamily-BoldOblique.ttf
+3. Fallback font file names (candidates) are determined. For bold or italic fonts, regular font files are used as candidates. There are no fallback options for a regular font.
+4. If a desired or fallback font is found in the search directory, the font file is loaded and provided for report generation. The search is not case sensitive.
+The default fonts usually do not contain characters for languages such as Chinese and Korean. To generate reports in such languages, it is recommended to install the Arial Unicode MS font. On Windows, the font installation is required for all users so that the font file is placed in the C:\Windows\Fonts directory.
+
+Fonts in Excel Format
+In generated reports in Excel format, only the font name is specified; the font itself is not included in the report file. The default font is Arial. When a file is opened in Microsoft Excel or Libre Office Calc, the application loads the font from the system. If the font is missing, automatic replacement is used. You can change the font using the styles file.
+Generating Report
+The list of reports is displayed on the Main Menu > Reports page according to the PlgElasticReport.xml configuration file. By clicking on a report item, a user navigates to the report parameters page. The set of fields in that form depends on the report settings. After entering the report parameters, click the Download Report button to start generating and downloading the report.
+Report generation can be started using a direct link. In this case, a user must be logged in. Link examples are shown below. Please note that the sets of request parameters for PrintReport1 and PrintReport2 addresses are different.
+Example 1:
+http://localhost:10008/ElasticReport/Print/PrintReport1?reportID=1&startTime=2024-05-28&endTime=2024-05-29&archive=Hour&format=Html
+Example 2:
+http://localhost:10008/ElasticReport/Print/PrintReport2?reportID=1&offset=0&period=1&unit=Day&archive=Hour&format=Html
+Parameter
+Data Type
+Description
+reportID
+Integer
+Report ID from the PlgElasticReport.xml file
+startTime
+Date and time in YYYY-MM-DD or YYYY-MM-DD'T'HH:MM format
+Report start date and time
+endTime
+Date and time
+Report end date and time
+offset
+Integer
+Offset of the report start date relative to the current date. Can be positive or negative
+period
+Integer
+Duration of the reporting period
+unit
+Day | Month
+Unit for offset and period
+archive
+String
+Archive code from which the report data is taken
+format
+Pdf | Xlsx | Html
+Output format
+
+Map Plugin
+Overview
+Map Plugin displays the status and parameters of stationary and moving objects on interactive OpenStreetMap maps. The plugin provides visual control of geographically distributed systems and transport. By clicking, a user is taken to a page with detailed information on the object of interest. Download the plugin using the link. The appearance of Map Plugin is shown in the following figure.
+
+Installation
+Map Plugin is installed according to the instructions. During installation, complete the following additional step: copy the PlgMap.xml file from the plugin distribution into your project. The file should be displayed in the project explorer under the Webstation > Configuration Files node.
+Configuring
+Plugin Settings
+General plugin settings that affect the display of all maps are located in the PlgMap.xml file.
+The GeneralOptions section contains general plugin options:
+PopupOnClick - whether to show the coordinates of the point a user clicked on.
+The TileLayers section contains tile layer settings. Depending on the tile provider, each TileLayer has its own set of options. A user can switch tile layers on the map.
+The MarkerIcons section defines the marker icons that are available on maps. There are two types of marker icons:
+1. Icons of the Classic type icons are based on an image file. The file name has a suffix corresponding to the object status: undefined, normal, error, and unbound (the status is not bound to a channel). The icon files are located in the SCADA\ScadaWeb\wwwroot\plugins\Map\images directory.
+2. Icons of the Awesome type use the popular graphic font called Font Awesome.
+Creating Map
+Each map is saved in a separate XML file with the map extension. The map example, MapExample.map, is included in the plugin installation package. Map files should be located in the views directory or its subdirectory.
+So, to create a new map, in the Administrator application, create a new XML file with the map extension in the Views section of the project, and then specify the path to the created file in the Views table.
+
+
+
+Map File Structure
+Consider the structure of the map file using MapExample.map as an example. All map XML elements are contained within the root MapView element.
+The InitialView element contains the initial coordinates and scale of the map. The scale is an integer between 0 and 18.
+<InitialView>
+  <Lat>48.8430</Lat>
+  <Lon>2.3275</Lon>
+  <Zoom>13</Zoom>
+</InitialView>
+Next come the LayerGroup elements, each of which contains a group of map objects. A user can show and hide the group via the web interface.
+The Options element inside a LayerGroup specifies the group's options.
+<Options>
+  <Name>Main</Name>
+  <DefaultIcon>Site</DefaultIcon>
+  <Visible>true</Visible>
+  <ShowTooltips>true</ShowTooltips>
+</Options>
+Name - group name;
+DefaultIcon - default marker icon;
+Visible - visibility of group objects;
+ShowTooltips - whether to display tooltips for objects.
+Let's look at an example of a stationary object, the Location element:
+<Location>
+  <Name>Eiffel Tower</Name>
+  <Descr>Avenue Anatole France, Paris, France</Descr>
+  <Icon></Icon>
+  <Lat>48.858222</Lat>
+  <Lon>2.2945</Lon>
+  <StatusCnlNum>0</StatusCnlNum>
+  <DataItems>
+    <DataItem cnlNum="101" />
+    <DataItem cnlNum="104">My text</DataItem>
+  </DataItems>
+  <Links>
+    <Link viewID="2" />
+    <Link viewID="2">My link</Link>
+  </Links>
+</Location>
+Name - object name;
+Descr - object description;
+Icon - marker icon. If not specified, the default icon is used;
+Lat and Lon - latitude and longitude of the object;
+StatusCnlNum - the number of the input channel that shows the object status. Equals 0 if the channel is not specified. Valid channel data: channel status equal to 0 means that the object status is not defined, channel value equal to 0 means the object is normal, channel value equal to 1 means the object is in an error state;
+DataItems - channels whose values ??are displayed in the object information popup;
+Links - links to views that can be accessed from the information popup.
+Let's consider an example of a mobile object, the Vehicle element:
+<Vehicle>
+  <Name>Taxi</Name>
+  <Descr>Uber</Descr>
+  <Icon>Car</Icon>
+  <LatCnlNum>201</LatCnlNum>
+  <LonCnlNum>202</LonCnlNum>
+  <BearingCnlNum>203</BearingCnlNum>
+  <StatusCnlNum>204</StatusCnlNum>
+  <DataItems />
+  <Links />
+</Vehicle>
+The Name, Descr, Icon, StatusCnlNum, DataItems and Links parameters are similar to a stationary object.
+LatCnlNum and LonCnlNum - channel numbers that determine the latitude and longitude of the object;
+BearingCnlNum - channel number that determines the rotation of the object. Rotation is measured in degrees. A channel value of 0 corresponds to neutral object rotation. A positive value means clockwise rotation, while a negative value means counterclockwise rotation.
+The Circle, Polygon, Polyline and Rectangle elements are used to add corresponding geometric shapes to the map.
+
+Notification Plugin
+Overview
+Notification Plugin helps an operator to pay attention to the most important events. The plugin generates notifications based on events according to specified rules and displays them in the notification panel that appears on the right side of the web page. In addition, the plugin turns on an audible alert depending on the notification type. Download the plugin using the link. The notification panel is shown in the following figure.
+
+The plugin displays only those events that require acknowledgement and have not yet been acknowledged. The filter specified in the plugin configuration is applied to the displayed events. Clicking the Information button displays a tooltip related to the notification. If a user acknowledges the event, the corresponding notification is hidden.
+Installation
+Notification Plugin is installed according to the instructions. Follow additional steps during installation:
+• Copy the PlgNotification.xml file from the plugin distribution into your project. The file should be displayed in the project explorer under the Webstation > Configuration Files node.
+• In the Webstation application options, in the Plugin Assignment section, select the PlgNotification plugin as the notification management plugin.
+Configuring
+The configuration file PlgNotification.xml contains the parameters described in the following table.
+XML Element
+Description
+EventFilter
+Event filter section
+ObjNums
+Object numbers
+DeviceNums
+Device numbers
+Statuses
+Status identifiers
+Severities
+Severity values
+Tips
+Notification tips section
+Tip
+Section that defines one tip
+TipCondition
+Tip condition
+Link
+If the parameter is defined, it specifies a link to go to the tip
+Html
+HTML markup of the tip content
+If the parameter value is a numeric range, it may contain commas and hyphens, for example, 1-5,10.
+Notification Plugin also uses some parameters from the ScadaWebConfig.xml file, the general configuration file of the Webstation application:
+Parameter
+Description
+RefreshRate
+Data refresh rate in milliseconds
+EventArchiveCode
+Event archive code on the basis of which notifications are generated
+EventCount
+Number of notifications displayed
+EventDepth
+Number of days to request events
+
+Automatic Control Module
+Overview
+Automatic Control Module is an additional module for the Server application that sends commands and generates events when certain conditions are met. The module helps to implement various control algorithms and sending notifications without the need for programming, through the user interface. Download the module using the link. The following figure shows the form for configuring the module.
+
+Information about fired triggers, sent commands and events is recorded in the ModAutoControl.log module log file, which can be viewed using the Administrator application or any text editor.
+Installation
+Automatic Control Module is installed according to the instructions. The module installation sequence is typical.
+Configuring
+Setting up the module involves creating triggers that fire when certain conditions are met. Triggers can be of different types, discussed below. When a trigger fires, the module sends commands and generates events that relate to that trigger.
+To open the module configuration form, go to the Server > Modules page, select the ModAutoControl module and click the Properties button. The module should be in the list of active modules. The module configuration is saved in the ModAutoControl.xml file.
+Triggers
+Channel Data Trigger
+A channel data trigger is fired when the channel value and status match the conditions specified in the trigger parameters. When started, the module populates a list of channels that satisfy the channel filter. The value and status of the channel, which are specified by the trigger parameters, are checked individually for each channel from that list. If the channel filter is empty, the trigger works for all active channels of the input type.
+The trigger has a state that provides the ability to delay and repeat the trigger firing. The trigger state is saved during the module's operation and is loaded when Server starts.
+
+Multi-Channel Data Trigger
+This type of trigger is used if the condition must take into account the values ??of more than one channel. If the status of any of the specified channels is not defined, then the condition for that channel is considered not to be met. The trigger state is saved and loaded by the module.
+
+Channel Data Change Trigger
+A trigger fires when the value or status of the specified channel changes. The corresponding parameter is intended to limit the trigger frequency.
+
+Event Trigger
+An event trigger fires if an event that occurs in the system meets the specified conditions. The trigger also responds to events generated by the module itself. When a trigger fires, new events cannot be generated to avoid an infinite loop.
+
+Time Trigger
+A time trigger can fire every day at specified times, on specific days of the week, days of the month, or on a specific date.
+
+Command Trigger
+A trigger on a command is convenient to use in cases where a series of commands need to be sent based on one command. If a trigger has a data validation condition, the incoming command data is converted to a string using UTF8 encoding and then checked against the condition.
+The trigger also responds to commands sent by the module itself. The maximum recursion depth is limited to 10 levels.
+
+Commands
+The figure below shows the parameters of the command that is sent when the trigger fires or normalizes. A command can be sent to a channel or directly to a device. If a command is sent to a channel, the command will be checked for permissions and the output formula will be calculated. If a command is sent to a device, it will be added to the queue for sending to clients as is, without any additional processing. When sending a command to a device, specify the command number or code.
+
+If the Copy value checkbox is checked, the value of the command being sent will be copied from the value of the channel or command that fired the trigger, if applicable for the given trigger type. The string data specified in the command parameters may contain variables, which are described below.
+Events
+The following figure shows the parameters of the event that is generated when the trigger fires or normalizes.
+
+If the event severity is set to default (0) in the module configuration, it is assigned by Server based on the channel status. If the severity is non-zero, the event is created with the specified severity.
+If the Acknowledgment required checkbox is not set, but the Ack Required field is set in the configuration database for the channel status, then the event acknowledgement flag is assigned by Server based on the status.
+The Custom text of the generated event is static without variable support.
+Variables
+The string data of commands that are sent when triggers fire can contain variables. Variables are written in curly braces.
+The following variables are supported:
+Variable
+Description
+For triggers of all types
+{n}
+Current value of channel n, formatted, with dimensions. If n = 0, the trigger channel is used (if applicable)
+{Now}
+Current date and time in the server time zone
+{NowUtc}
+Current UTC date and time
+{Time}
+Trigger fire time in the server time zone
+{TimeUtc}
+Trigger fire time, UTC
+For triggers on channel data
+{CnlNum}
+Channel number
+{CnlName}
+Channel name
+{ObjNum}
+Object number
+{ObjName}
+Object name
+{DevNum}
+Device number
+{DevName}
+Device name
+{LoLo}
+Low low channel limit
+{Low}
+Lower channel limit
+{High}
+Upper channel limit
+{HiHi}
+High high channel limit
+{CnlVal}
+Channel value that caused the trigger to fire
+{CnlStat}
+Channel status that caused the trigger to fire
+For event triggers
+{EvID}
+Event ID
+{EvTime}
+Event time in the server time zone
+{EvObjNum}
+Object number of the event
+{EvObj}
+Object name of the event
+{EvDevNum}
+Device number of the event
+{EvDev}
+Device name of the event
+{EvCnlNum}
+Channel number of the event
+{EvCnl}
+Channel name of the event
+{EvText}
+Display text of the event
+{EvSev}
+Displayed event severity
+For command triggers
+{CmdVal}
+Command value that caused the trigger to fire
+{CmdDataStr}
+Command data as a string
+{CmdDataHex}
+Command data in hexadecimal
+
+
+Database Export Module
+Overview
+Database Export Module provides real-time export of data received from devices to popular databases. Supported DBMS are Microsoft SQL Server, Oracle, PostgreSQL and MySQL. The module is included in the Rapid SCADA distribution and does not require separate installation. The following figure shows the form for configuring the module.
+
+The module supports export to several different databases in parallel. The database to which the export is performed is called the export target. Based on the export target options, the module creates an exporter, a software object that processes data queues and calls SQL queries.
+Information about the module operation is recorded in the ModDbExport.log file. Information about the operation of each exporter is written in ModDbExport_*.log and ModDbExport_*.txt files.
+Configuring
+To open the module configuration form, go to the Server > Modules page, select the ModDbExport module and click the Properties button. The module should be in the list of active modules. The module configuration is saved in the ModDbExport.xml file.
+Add a new export target to the module configuration using the  button, selecting the DBMS from the drop-down list. Next, let's look at the pages containing various groups of export target settings. The screenshots below show the default parameter values.
+
+Specify the Command code if users plan to manually send commands to export archives. Set the Status channel number to monitor the export status via the web interface. A channel of the Calculated type should be created in the configuration database. Channel values: 0 - normal, 1 - error. The queue options are set experimentally depending on the amount of exported data and the performance of the database server.
+
+A database into which the export is performed must be previously created and contain tables for storing information. The options for connecting to the database should be clarified with its administrator. If the database server is deployed on a separate computer, the server's firewall settings must be configured to allow incoming connections on the TCP port being used.
+
+Current data can be exported On Receive by Server from Communicator or On Timer. Transferring data when received ensures that all current data received from the polled devices is uploaded to the database. Transferring data by timer reduces the database size and saves network traffic.
+
+Historical data export refers to data that is transferred with a timestamp, such as:
+• Archives that are downloaded by Communicator from metering devices and transferred to Server.
+• Data received from Rapid Gate Module installed on a remote server when replicating archives.
+The Delay before export option helps to avoid multiple exports of calculated data if several data slices with the same timestamp are received one after another. The Bit of historical archive is used to retrieve data from the calculated channels.
+
+Archive replication ensures that the information in the Rapid SCADA archive and in the database is identical. If archive replication is enabled and the Automatically export archives checkbox is checked, historical data and events received by the Server service from clients are not added to the export queue to avoid duplication. The replication state is saved while the module is running and is loaded when the Server service is restarted.
+
+The figure above shows the options of the SQL query that is called by the exporter when Server receives the corresponding data or when replicating the archive. The link contains scripts for creating a database model and sample queries. SQL queries can contain parameters, which are specified with the @ prefix. To view a list of available parameters depending on the request data kind, click the  button.
+If the Single query checkbox is unchecked, the SQL query will be called for each channel whose data is processed. The request parameters for exporting the channel value and status are @val and @stat.
+If the Single query checkbox is checked, the SQL query will be called once only for those channels whose numbers are explicitly specified in the query filter. In this case, the names of the channel value and status parameters contain the channel number, for example, @val101 and @stat101.
+Queries that have the Single query checkbox checked are ignored:
+1. If current data is exported on receive.
+2. When exporting historical data received from clients.
+Commands
+Database Export Module supports receiving commands. To send commands to the module, create output type channels in the configuration database. The Tag code of the channel must match the Command code specified in the general export target options. A command can be sent via the Webstation application web interface or using another client interacting with the Server application.
+When a valid command is received, a task is created and added to the exporter task queue. The maximum length of a task queue is 10. If the queue is full, new commands will be ignored.
+Example of archive export command:
+cmd=ExportArchive
+startDT=2025-12-31 10:00:00
+endDT=2025-12-31 11:00:00
+Clear the exporter task queue:
+cmd=ClearTaskQueue
+The command arguments specify UTC time.
+
+
+Rapid Gate Module
+Overview
+Rapid Gate Module is designed to synchronize data between Rapid SCADA instances. Download the module using the link. The following figure shows the form for configuring the module.
+
+The module is used to implement the following functions:
+1. Transferring data from a downstream Rapid SCADA server to an upstream server in distributed automation systems.
+2. Synchronization of data between the primary and backup Rapid SCADA server.
+The main function of the module is the transfer of current data, historical data, events and commands from the server on which the module is running to the Rapid SCADA server specified in the settings. The module supports any number of independent gateways for exchanging information with multiple Rapid SCADA servers. The data to be transmitted is added to the queue by the module. This approach ensures reliable operation even with an unstable network connection.
+Information about the module operation is recorded in the ModRapidGate.log file. Information about the operation of each gateway is written in ModRapidGate_*.log and ModRapidGate_*.txt files.
+Installation
+Rapid Gate Module is installed according to the instructions. No additional actions are required during installation.
+Configuring
+To open the module configuration form, go to the Server > Modules page, select the ModRapidGate module and click the Properties button. The module should be in the list of active modules. The module configuration is saved in the ModRapidGate.xml file.
+Add a new gateway to the module configuration using the  button. Next, let's look at the pages containing various groups of gateway settings. The screenshots below show the default parameter values.
+
+Specify the Command code if users plan to manually send commands to synchronize archives. Specify archive masks if the gateway should transfer data to specific archives. If the archive masks are equal to -1, the gateway transfers data to the default archives defined in the configuration database. The queue options are set experimentally depending on the expected time of loss of connection with the remote server.
+
+Specify the options for connecting to the remote server. In the firewall settings of the remote server, allow incoming connections on the TCP port being used (10000). It is recommended to create a separate RapidGate user with the Application role in the configuration database for use by the module. Copy the Secret key from the remote server listener options.
+
+If different projects are running on the local and remote servers and have different identifiers in the configuration database tables, fill in the ID mapping options. If the IDs are the same, leave the mapping options blank.
+
+Current data can be transferred by the gateway to the remote server On Receive by the local Server from Communicator or On Timer. Transferring data when received ensures that new data is displayed on the remote server as quickly as possible. Timer-based data transfer saves network traffic.
+
+Transfer of historical data refers to data transferred with a timestamp, for example, archives that are downloaded by Communicator from metering devices and transferred to Server.
+
+When transferring events and acknowledgements, it is theoretically possible that the acknowledgement will be transmitted before the event. In this case, the event on the remote server will remain unacknowledged. It is important to ensure time synchronization between the local and remote servers, otherwise the latest sent events may not be displayed by the Webstation application on the remote server.
+
+The gateway requests commands from the remote server at a frequency specified in the settings. To reduce network traffic, increase the polling rate value.
+
+When transferring outcoming commands, commands intended for an application are not sent. On the remote server, the output formula of the channel to which the command relates is applied to the command value.
+
+Archive replication ensures that archives on the local and remote servers are identical. Replication can be performed from a local server to a remote one and vice versa. The direction of data transfer is determined automatically based on data availability. The data availability channel is intended to unambiguously determine the presence of data on the local server. If the channel is not specified, the gateway checks for any data in the archive for the time period corresponding to the replication step. The replication state is saved while the module is running and is loaded when the Server service is restarted.
+Commands
+Rapid Gate Module supports receiving commands. To send commands to the module, create output type channels in the configuration database. The Tag code of the channel must match the Command code specified in the general gateway options. A command can be sent via the Webstation application web interface or using another client interacting with the Server application.
+When a valid command is received, a task is created and added to the gateway task queue. The maximum length of a task queue is 10. If the queue is full, new commands will be ignored.
+An example of a command that transfers data from the local server to the remote server:
+cmd=UploadArchive
+startDT=2025-12-31 10:00:00
+endDT=2025-12-31 11:00:00
+Download an archive from the remote server to the local server:
+cmd=DownloadArchive
+startDT=2025-12-31 10:00:00
+endDT=2025-12-31 11:00:00
+Synchronize (upload and download) archives:
+cmd=SyncArchive
+startDT=2025-12-31 10:00:00
+endDT=2025-12-31 11:00:00
+Clear the gateway task queue:
+cmd=ClearTaskQueue
+The command arguments specify UTC time.
+
+
+Database Import Driver
+Overview
+Database Import Driver is designed to read current data from a third-party database, as well as to write to a third-party database using commands. Supported DBMS are Microsoft SQL Server, Oracle, PostgreSQL and MySQL. The driver is included in the Rapid SCADA distribution and does not require separate installation.
+Configuring
+Create a new communication line and a device of the DB Import type using the wizards called up by the  and  buttons. The communication line is responsible for connecting to one database. The communication channel type of the line is Undefined. The following figure shows a communication line node in the project explorer.
+
+Open the properties of the created device. The device settings specify receiving tag values ??and sending commands via SQL queries.
+
+It is assumed that the database that serves as the source of information for the driver already exists and contains the necessary tables. Contact the database administrator for information about database connection options.
+The figures below show the query parameters for getting device tag values.
+
+
+In the Tags field, enter the device tag codes. Each line contains the code of one tag. The SQL field contains the query text. If the Single row result check box is checked (Query 1), the query should return a single row, each field of which contains a tag value. If the checkbox is unchecked (Query 2), the query should return a set of rows, each containing the tag code and value. In the second case, the query result must contain the code and val columns.
+
+Due to command support, the driver can write information to the database by a command sent by an operator or automatically. The Command code must match the tag code of the channel through which the command is sent. In the SQL query text, the value and data of the command are available through the @cmdVal and @cmdData parameters.
+Once the device properties are configured, create channels in the configuration database using the wizard called up by the  button.
+If the configuration is correct, the device data page will display the obtained values.
+
+SQL Scripts
+Example scripts for PostgreSQL:
+CREATE SCHEMA IF NOT EXISTS drv_db_import
+    AUTHORIZATION postgres;
+
+CREATE TABLE IF NOT EXISTS drv_db_import.table1
+(
+    id integer NOT NULL,
+    val1 double precision,
+    val2 character varying,
+    val3 timestamp with time zone,
+    CONSTRAINT table1_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS drv_db_import.table2
+(
+    id integer NOT NULL,
+    code character varying,
+    val double precision,
+    CONSTRAINT table2_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS drv_db_import.table_out
+(
+    create_time time with time zone DEFAULT now(),
+    cmd_val double precision,
+    cmd_data bytea
+);
+
+-- Query 1
+SELECT val1, val2, val3 FROM drv_db_import.table1 LIMIT 1
+
+-- Query 2
+SELECT code, val FROM drv_db_import.table2
+
+-- Command
+INSERT INTO drv_db_import.table_out (cmd_val, cmd_data) VALUES (@cmdVal, @cmdData)
+
+
+Modbus Slave Driver
+Overview
+The driver implements the popular Modbus communication protocol and operates as a slave. Using the driver, Communicator waits for incoming requests and commands from a third-party device or application that acts as a master. Supported communication channels are serial port, TCP server and UDP. The driver can operate in either Modbus RTU or Modbus TCP mode. Download the driver using the link.
+Modbus Slave Driver features:
+1. Receives data from a master device using write commands.
+2. Provides data to a master device in response to read commands.
+3. Works as a gateway, that is, the driver broadcasts channel values ??received from other devices.
+Installation
+Modbus Slave Driver is installed in accordance with the general sequence of installing drivers.
+Configuring
+Create a new communication line using the wizard, which is called by the  button. Select the appropriate communication channel type and configure its properties. The following figure shows an example of the TCP server communication channel options.
+
+In the custom communication line options section, add the TransMode parameter, which is responsible for the data transfer mode. It can take RTU and TCP values.
+
+Using the wizard called by the  button, add one or more Modbus Slave type devices to the communication line. The numeric address of the device is important, it is the slave device ID according to the Modbus protocol specification. As an example, three devices operating in different modes were added, which are discussed below. The following figure shows a communication line node in the project explorer.
+
+The Independent device mode is used if Communicator should receive data from a controller that is the master. To transmit information to Communicator, the controller writes data using Modbus functions 0x05 and 0x06. In addition, the controller can read previously written device tags from Communicator. Reading is performed using Modbus functions 0x01, 0x02, 0x03 and 0x04. A device tag can be written either by the master controller or by a control command sent by an operator.
+
+The Undefined value option specifies the value that is returned to the master if the requested register data is undefined. It applies to numeric registers and has no effect on flags. If a Data validity period is set, tag values ??will be reset to undefined if no new data is received from the controller for the specified period of time.
+The Device template defines the structure and addresses of the Modbus registers. The template format used by Modbus Slave Driver (DrvModbusSlave) is identical to the device template format used by Modbus Master Driver (DrvModbus).
+
+If the independent device mode is selected, after completing the device properties setup, create channels in the configuration database using the wizard called up by the  button. If another device mode is selected, creating channels is not required.
+The Device gateway mode is used to provide the current channel data of the selected device to a third-party system.
+
+The channels of the data source device and tags of the gateway device are linked based on a comparison of the channel tag codes and the tag codes specified in the gateway template. If the data source device is polled via the Modbus protocol, the same device template can be used to operate the gateway.
+If the master executes a write command to the gateway device tag, Communicator sends the corresponding command to Server on the channel associated with the tag. That command can then be passed to a physical device, whose data is transmitted by the gateway.
+
+The driver operation in the Channel gateway mode is similar to the operation in the device gateway mode. The difference is that the channel gateway options explicitly specify the channel numbers whose data is being broadcast. The channel gateway options are shown in the following figure.
+
+For each selected channel, specify the starting Modbus register Address and choose the Data type. The Ratio is used to transmit a real value of the channel as an integer with a certain number of decimal digits. The Read only parameter determines whether the gateway responds to an element write command received from the master.
+
+
+Telegram Driver
+Overview
+Telegram Driver is designed to send notifications using the popular Telegram messenger. The advantages of using Telegram is quickness of receiving notifications, no fee for the service and easy management of notification groups. Download the driver using the link.
+Installation
+Telegram Driver is installed in accordance with the general sequence of installing drivers.
+Configuring
+Creating Bot
+In order for the driver to interact with the Telegram messenger, it is necessary to create a Telegram bot.
+1. Install the application and register Telegram.
+2. Add the bot named BotFather to the contact list.
+  
+3. In the dialog with BotFather, run the command /newbot and follow the instructions from BotFather to create a new bot. Once the bot is created, copy the bot token.
+  
+Important! Keep the bot token secret.
+Driver Settings
+Telegram driver setup sequence:
+1. Create a separate communication line containing a single device of the Telegram type. Use the wizards that are called using the  and  buttons.
+2. Open the device properties, enter the bot token obtained earlier and click the Save button.
+  
+3. Upload the project for execution by the  button.
+4. Open the Communicator > Drivers page, select the DrvTelegram driver and register the driver.
+5. Re-upload the project for execution.
+After completing the described actions, use the communication line log to check that requests to the Telegram server are sent successfully and that responses are received.
+
+Managing Subscriptions
+To receive messages sent by the Telegram driver, create a chat in which one of the participants will be your bot. In the Telegram application, create a new group, add the previously created bot and other contacts who will receive messages.
+If the settings are correct, your bot will respond to commands sent from the messenger, for example, the /help command. Run the /info command to get the chat ID and name.
+
+Enter the chat ID and name in the device properties form as shown in the figure below. After saving the properties, upload the project for execution again.
+
+Sending Messages
+To send a message to a Telegram group, you need to send a command with the Notif code, containing the group name (or identifier) and the message text. An example of sending a command from the Administrator application is shown in the following figure.
+
+Automatic sending of notifications when certain conditions are met and events occur is carried out by Automatic Control Module.
+
+
+Additional Applications
+Auto Report
+
+
+Auto Report
+Overview
+The Auto Report application is designed to automatically generate various reports according to a schedule, save them to disk and send them by email. Download the application using the link. Sending reports by email is provided by the DrvEmail driver, which is included in the Rapid SCADA distribution and does not require separate installation.
+The application supports adding new libraries to the list of generated report types. The following report types are supported by default:
+• Historical data report.
+• Event report.
+• Elastic report.
+Auto Report works as a service. The application runs tasks to generate reports according to the schedule. Generated reports are saved to disk and, if the corresponding option is enabled, sent by email. Auto Report connects to the Server application to receive commands for generating reports and to send commands for sending reports via email.
+Installation
+The sequence of installing the Auto Report application on Windows:
+1. Unzip the application distribution package.
+2. Copy the contents of the SCADA distribution folder to the Rapid SCADA installation directory.
+3. Run the ScadaAutoReport\svc_install.bat file as administrator to register the service.
+4. Create a shortcut on the desktop to the ScadaAutoReport\ScadaAutoReportConfig.exe file to launch the Auto Report configurator.
+5. Launch the configurator and perform the following actions:
+a. Start the Auto Report service by clicking the  button.
+b. Open the registration form using the  button and register the application.
+The installation sequence on Linux is as follows:
+1. Unzip the application distribution package.
+2. Copy the contents of the SCADA distribution folder to the /opt/scada/ directory.
+3. Copy the Daemons/scadareport6.service file from the distribution to the /etc/systemd/system directory.
+4. Enable the service by running the command
+  sudo systemctl enable scadareport6.service
+5. After the first start of the service, copy the computer code from the log, get the registration key and register the application.
+Configuring
+The application configuration is saved in the ScadaAutoReportConfig.xml file, which is located in the Config subdirectory of the application. When using Auto Report on Windows, the configuration is performed using the configurator application, which is launched from the ScadaAutoReportConfig.exe file. When running on Linux, the configuration file is edited manually using a text editor.
+The screenshots below show the options of the Auto Report application, edited in the configurator application.
+
+Set the Culture option to a non-empty value if the culture used to generate reports should be different from the culture set in the Administrator application for all applications. Specify the Time zone if it is different from the server time zone. Leave both options blank to use the default values.
+The CSS path is used when generating reports in HTML format for those report types that support this format. The Report directory is specified if reports should be saved in a directory other than the default report directory. By default, the Reports directory, located one level above the Auto Report application directory, is used to save reports.
+If the Pack reports checkbox is checked, the reports are saved to disk as ZIP archives. The Retention option determines how many days to keep reports on disk.
+Specify the Channel number to receive commands if reports need to be generated not only according to the schedule, but also upon operator command. The Channel number to send emails is used when sending reports via email to transmit commands to the driver.
+
+The Server Connection tab contains the options for connecting to the Server application. The specified user must exist in the configuration database. The Secret key should be copied from the Server settings.
+The DB Connection tab is used to set parameters for connecting to a database that contains the information needed to generate reports. For the report types available by default, a database connection is not required.
+
+Information about report types in the configurator is available for viewing only. To edit report types through the configuration file, please consult the developers.
+
+To add a new task, click the  button on the configurator toolbar. The task includes up to several reports and is executed on schedule or on command. The task name is used in the report file name, so it can only contain characters that are allowed in file names. The Start date option defines the beginning of the period of the generated report relative to the current date. The Period option specifies the duration of the report period.
+
+The task for generating a report can be automatically launched Every Day, on certain Days of Week or Days of Month. The Time option specifies the time of day at which the task runs.
+
+If the Enabled checkbox is checked in the mail options, then the generated reports, in addition to being saved to disk, are also sent by email using the DrvEmail driver. The To field specifies the name of a contact from the driver's address book, the name of a contact group, or an email address.
+
+To add a new report to the task, click the  button. Uncheck the Active checkbox to exclude the generation of the report when the task is running. The Prefix is ??used in the report file name. The formats available for selection (PDF, XML 2003, XLSX, HTML) depend on the report type. Specify the Archive code if the report uses data from the archive that is written by the Server application. The Custom arguments are specific to the selected report type.
+To use the Auto Report application, make the following settings in the project using the Administrator application:
+1. Add a new user, which is specified in the server connection options.
+2. Create a communication line, device and channels for email operation, if used.
+3. Create a channel for sending commands to generate reports by an operator, if required.
+The figures below show examples of setting up the configuration database of the project.
+
+
+
+
+Operation
+On Windows, the Auto Report service is started, restarted, and stopped using the , , and  buttons located on the configurator toolbar.
+On Linux, to start, restart, and stop the service, use the commands:
+sudo systemctl start scadareport6
+sudo systemctl restart scadareport6
+sudo systemctl stop scadareport6
+If the application configuration has changed, restart the Auto Report service for the changes to take effect. Monitor the application's operation using the ScadaAutoReport.log file.
+When the service is running, tasks are executed according to the specified schedule. To manually start a task, send a command to the channel specified in the general application options. The command value corresponds to the ID of the task to be launched.
+
+Enterprise Edition
+Overview
+Audit Log Plugin
+Guard Plugin
+
+
+Enterprise Edition Overview
+Rapid SCADA Enterprise is proprietary software built on an open source core. Rapid SCADA Enterprise is designed for large-scale implementations with high security requirements. Key features of the Enterprise edition:
+1. The license applies to the main and backup servers.
+2. The Enterprise edition includes all software modules included in the Standard edition, plus enterprise modules.
+3. Transfer of the software to another server is permitted upon request.
+Enterprise modules, distributed only in the Enterprise edition:
+• Audit Log Plugin
+• Guard Plugin
+• Database Report Plugin
+• Spreadsheet Report Plugin
+• Replication Module
+• Performance Monitor
+Installation of Rapid SCADA Enterprise includes installation of the basic Rapid SCADA Standard distribution and subsequent installation of additional software modules. Installation packages of the enterprise modules are available upon request.
+
+
+Audit Log Plugin
+Overview
+Audit Log Plugin records the actions of Webstation application users in a PostgreSQL database. The following types of actions are recorded:
+• Login.
+• Logout.
+• Open view.
+• Open chart.
+• Generate report.
+• Send command.
+Users with the Administrator role have access to generate audit log reports. To generate a report, navigate to Main Menu > Reports > Audit Log. An example report is shown in the following figure.
+
+Reports are generated in XLSX format and can be opened using Microsoft Excel and LibreOffice Calc.
+Installation
+Audit Log Plugin is installed according to the instructions. To generate a report, the plugin uses the libraries included in Elastic Report Plugin, so Elastic Report Plugin must also be installed and activated.
+The plugin uses a PostgreSQL database, which must be created in advance. The plg_audit schema and audit_log table are created by the plugin automatically upon startup. The database connection options are specified in the ScadaInstanceConfig.xml file, which is located in the Config subdirectory of the Rapid SCADA installation directory.
+The default database connection options are as follows:
+Database name: rapid_scada
+Username: postgres
+Password: postgres
+The password specified in the ScadaInstanceConfig.xml file is encrypted using the Administrator application. Password encryption is available in the Tools > Project Tools > Encrypt Password menu.
+Configuring
+In general, Audit Log Plugin does not require any configuration. If the retention period for user actions needs to be changed, in the ScadaWebConfig.xml file, find the Audit option group and edit the Retension option. This option is measured in days.
+
+
+Guard Plugin
+Overview
+Guard Plugin constantly monitors all user requests to the Webstation application, detects attempts to brute force attack the web application, and blocks the intruder's requests. When security events occur, they are recorded in the event archive.
+Information about the plugin operation is available to users with the Administrator role. The following figures show the web interface of the plugin.
+
+
+Activity monitoring is performed by users, IP addresses and web sessions. Blocking of violators is carried out by username, by IP address or globally for the web application. In case of a global block, users who are already logged in continue to work.
+Installation
+Guard Plugin is installed according to the instructions. During installation, complete the following additional step: copy the PlgGuard.xml file from the plugin distribution into your project. The file should be displayed in the project explorer under the Webstation > Configuration Files node.
+Configuring
+Guard Plugin is configured by editing the PlgGuard.xml file in the Administrator application. The configuration file contains the parameters described in the following table.
+Parameter
+Default Value
+Description
+GeneralOptions
+
+Section of general options
+UserFailsPerMinute
+10
+Maximum number of failed login attempts allowed per minute for a specific user
+TotalFailsPerMinute
+100
+Maximum number of failed login attempts allowed per minute for all users
+BlockingDuration
+1
+Login blocking duration, minutes
+CacheExpiration
+30
+Cache expiration period for violation data, minutes
+EventOptions
+
+Security event recording options
+ArchiveCode
+Events
+Archive code for recording events. If not specified, the default event archive is used
+CnlNum
+0
+Channel number to which generated events belong
+
+
+Developers
+Development Basics
+Logic Module Development
+Driver Development
+Web Plugin Development
+Module Store
+
+
+Development Basics
+Rapid SCADA is an open source project. Therefore, engineers and programmers can join the Rapid SCADA community to develop software that communicates with or integrates with Rapid SCADA. According to practice, an engineer with basic programming knowledge can begin to develop modules for Rapid SCADA, improving his skills bit by bit.
+Module Development
+The term module refers to a software module that includes a DLL library and a set of additional files, which is built into one of the Rapid SCADA applications, expanding its functionality. Main module types:
+• Logic module is a library that operates as part of the Server service, which adds data processing logic and mathematical calculations.
+• Communication driver is a library managed by Communicator, which implements an industrial communication protocol. For example, Modbus, OPC or MQTT.
+• Web plugin consists of a set of DLLs and scripts that are built into the Webstation application, expanding the capabilities of the Rapid SCADA web interface.
+• Extension of the Administrator application adds new features to the application's user interface.
+For development, use the free Microsoft Visual Studio Community and Visual Studio Code environments. The primary development language is C#.
+Integration
+Rapid SCADA provides a wide range of integration methods:
+Database
+Rapid SCADA has built-in mechanisms for reading and writing real-time data into various popular DBMSs. Import and export can be flexibly configured in accordance with the existing data model.
+Industrial protocols
+SCADA systems made by different manufacturers can exchange data with each other using protocols such as Modbus, OPC or MQTT. One system is a data source, and the other is a data consumer.
+Application protocol
+Rapid SCADA supports its own application protocol, implemented on top of TCP, which is used to exchange data between the Server application and client applications. The protocol is documented, and a .NET client library is available. The application protocol can be used by a third party client to read data from SCADA archives and send commands.
+Web API
+The Webstation application provides access to the Web API, which can be used from both client and server code. An example of using the Web API is available here.
+Direct reading of archives
+Rapid SCADA supports various types of archives based on files, relational DBMSs and time series databases. Integration can be carried out by directly reading data from the archive by the relevant clients.
+
+Logic Module Development
+Logic modules have the following features:
+• Receive current, historical data and events at the fastest possible speed for processing.
+• Record data and events in archives.
+• Control commands coming to Server.
+• Send commands.
+Let's look at the development of the logical part and user interface of a simple module, which will be named ModAbc. To develop a complex module, learn and use the source code of existing modules on GitHub as examples.
+Logic Implementation
+Create a new project based on the Class Library template. Enter the project name ModAbc.Logic, and select the .NET 8.0 framework.
+Add dependencies to the ScadaCommon.dll, ScadaCommon.Log.dll and ScadaServerCommon.dll libraries. Binary files of the libraries can be found in the Rapid SCADA installation directory, or compiled from source code.
+Double click a project node in Solution Explorer to open the project file ModAbc.Logic.csproj and edit its properties as shown below.
+<PropertyGroup>
+  <TargetFramework>net8.0</TargetFramework>
+  <ImplicitUsings>enable</ImplicitUsings>
+  <Nullable>disable</Nullable>
+  <RootNamespace>Scada.Server.Modules.ModAbc.Logic</RootNamespace>
+</PropertyGroup>
+Create a ModAbcLogic class and copy the code below. This class implements the logic of the module. Note that the namespace and class name must contain the ModAbc module code. Explore the source code of the ModuleLogic base class and the IServerContext interface to learn about the capabilities available when implementing module logic.
+using Scada.Data.Models;
+
+namespace Scada.Server.Modules.ModAbc.Logic
+{
+    public class ModAbcLogic : ModuleLogic
+    {
+        private const int InputChannel = 105;
+        private const int OutputChannel = 104;
+        private const int UserID = 11;
+        private const double Threshold = 10.0;
+
+        private bool high = false;
+        private bool low = false;
+
+        public ModAbcLogic(IServerContext serverContext)
+            : base(serverContext)
+        {
+        }
+
+        public override string Code => "ModAbc";
+
+        public override void OnServiceStart()
+        {
+            Log.WriteAction("?????? ModAbc ???????");
+        }
+
+        public override void OnServiceStop()
+        {
+            Log.WriteAction("?????? ModAbc ??????????");
+        }
+
+        public override void OnIteration()
+        {
+            CnlData curData = ServerContext.GetCurrentData(InputChannel);
+
+            if (curData.IsDefined)
+            {
+                if (curData.Val >= Threshold)
+                {
+                    if (!high)
+                    {
+                        ServerContext.SendCommand(new TeleCommand(OutputChannel, 1, UserID));
+                        high = true;
+                    }
+                }
+                else
+                {
+                    high = false;
+                }
+
+                if (curData.Val < Threshold)
+                {
+                    if (!low)
+                    {
+                        ServerContext.SendCommand(new TeleCommand(OutputChannel, 0, UserID));
+                        low = true;
+                    }
+                }
+                else
+                {
+                    low = false;
+                }
+            }
+        }
+    }
+}
+Build the project and copy ModAbc.Logic.dll to the Server modules directory ScadaServer\Mod
+Interface Implementation
+Create a new project based on the Windows Forms Class Library template. Enter the project name ModAbc.View, and select the .NET 8.0 framework.
+Add dependencies to the ScadaCommon.dll, ScadaCommon.Forms.dll, ScadaCommon.Log.dll and ScadaServerCommon.dll libraries.
+Double click a project node in Solution Explorer to open the project file ModAbc.View.csproj and edit its properties as shown below.
+<PropertyGroup>
+  <TargetFramework>net8.0-windows</TargetFramework>
+  <Nullable>disable</Nullable>
+  <UseWindowsForms>true</UseWindowsForms>
+  <ImplicitUsings>enable</ImplicitUsings>
+  <RootNamespace>Scada.Server.Modules.ModAbc.View</RootNamespace>
+</PropertyGroup>
+Create a ModAbcView class and copy the code below. This class implements the user interface of the module. Note that the namespace and class name must contain the ModAbc module code. In the example, there is actually no user interface for the module, however, a minimal implementation of the interface is required so that the module can be used in the Administrator application. View the source code of the ModuleView base class to learn about the available features.
+namespace Scada.Server.Modules.ModAbc.View
+{
+    public class ModAbcView : ModuleView
+    {
+        public override string Name => "?????? ABC";
+        public override string Descr => "??????? ?????? ??????";
+    }
+}
+Build the project and copy ModAbc.View.dll to the Administrator libraries directory ScadaAdmin\Lib
+Run Module
+Start the Administrator application or restart it if it is open. Create and open a copy of the HelloWorld project, then find the developed module in the Server > Modules section. Select the module and make sure its description is displayed correctly. If an error occurs when displaying a module description, there is most likely an inaccuracy in the namespace or class names of the module user interface.
+Activate the ModAbc module and upload the project for execution. Information about the start and stop of the module should be displayed in the Server log. When the value of channel 105 passes through the threshold 10 specified by the constant, commands 0 or 1 are sent to channel 104.
+
+Driver Development
+Advantages of Rapid SCADA as a platform for driver creation:
+• Communicator is responsible for the connection (Serial, TCP, UDP). The developer implements encoding and decoding of data packets.
+• A driver can collect current, historical data and events, and send commands.
+• The built-in OPC UA server provides data received from the developed driver to third-party OPC clients.
+• A ready-made logging system.
+• Unified user interface for configuration.
+Next, let's look at the development of the logical part and user interface of a simple driver, which will be named DrvAbc. To develop a complex driver that implements an industrial protocol, learn and use the source code of existing drivers on GitHub as examples (link 1, link 2).
+Logic Implementation
+Create a new project based on the Class Library template. Enter the project name DrvAbc.Logic, and select the .NET 8.0 framework.
+Add dependencies to the ScadaCommon.dll, ScadaCommon.Log.dll and ScadaCommCommon.dll libraries. Binary files of the libraries can be found in the Rapid SCADA installation directory, or compiled from source code.
+Double click a project node in Solution Explorer to open the project file DrvAbc.Logic.csproj and edit its properties as shown below.
+<PropertyGroup>
+  <TargetFramework>net8.0</TargetFramework>
+  <ImplicitUsings>enable</ImplicitUsings>
+  <Nullable>disable</Nullable>
+  <RootNamespace>Scada.Comm.Drivers.DrvAbc.Logic</RootNamespace>
+</PropertyGroup>
+Create a DevAbcLogic class and copy the code below. This class implements the logic for interacting with a device. Note that the namespace and class name must contain the DrvAbc driver code. Explore the source code of the DeviceLogic base class to learn about the capabilities available when implementing device interaction logic.
+using Scada.Comm.Config;
+using Scada.Comm.Devices;
+using Scada.Data.Models;
+
+namespace Scada.Comm.Drivers.DrvAbc.Logic
+{
+    internal class DevAbcLogic : DeviceLogic
+    {
+        public DevAbcLogic(ICommContext commContext, ILineContext lineContext, DeviceConfig deviceConfig)
+            : base(commContext, lineContext, deviceConfig)
+        {
+            CanSendCommands = true;
+            ConnectionRequired = false;
+        }
+
+        public override void Session()
+        {
+            base.Session();
+            Log.WriteLine("DrvAbc driver polling session");
+            FinishRequest();
+            FinishSession();
+        }
+
+        public override void SendCommand(TeleCommand cmd)
+        {
+            base.SendCommand(cmd);
+            Log.WriteLine("Command value = {0}", cmd.CmdVal);
+            FinishCommand();
+        }
+    }
+}
+Create a DrvAbcLogic class whose code is shown below. This class implements general, non-device specific driver logic. View the source code of the DriverLogic base class to learn about the available features.
+using Scada.Comm.Config;
+using Scada.Comm.Devices;
+
+namespace Scada.Comm.Drivers.DrvAbc.Logic
+{
+    public class DrvAbcLogic : DriverLogic
+    {
+        public DrvAbcLogic(ICommContext commContext)
+            : base(commContext)
+        {
+        }
+
+        public override string Code => "DrvAbc";
+
+        public override DeviceLogic CreateDevice(ILineContext lineContext, DeviceConfig deviceConfig)
+        {
+            return new DevAbcLogic(CommContext, lineContext, deviceConfig);
+        }
+    }
+}
+An example of the logical part of the driver is ready. Build the project and copy DrvAbc.Logic.dll to the Communicator drivers directory ScadaComm\Drv
+Interface Implementation
+Create a new project based on the Windows Forms Class Library template. Enter the project name DrvAbc.View, and select the .NET 8.0 framework.
+Add dependencies to the ScadaCommon.dll, ScadaCommon.Forms.dll, ScadaCommon.Log.dll and ScadaCommCommon.dll libraries.
+Double click a project node in Solution Explorer to open the project file DrvAbc.View.csproj and edit its properties as shown below.
+<PropertyGroup>
+  <TargetFramework>net8.0-windows</TargetFramework>
+  <Nullable>disable</Nullable>
+  <UseWindowsForms>true</UseWindowsForms>
+  <ImplicitUsings>enable</ImplicitUsings>
+  <RootNamespace>Scada.Comm.Drivers.DrvAbc.View</RootNamespace>
+</PropertyGroup>
+Create a DevAbcView class and copy the code below. This class implements the user interface for configuring parameters for interacting with a device. Note that the namespace and class name must contain the DrvAbc driver code. In the example, there is actually no user interface for the driver, however, a minimal implementation of the interface is required so that the driver can be used in the Administrator application. View the source code of the DeviceView base class to learn about the available features.
+using Scada.Comm.Config;
+using Scada.Comm.Devices;
+
+namespace Scada.Comm.Drivers.DrvAbc.View
+{
+    internal class DevAbcView : DeviceView
+    {
+        public DevAbcView(DriverView parentView, LineConfig lineConfig, DeviceConfig deviceConfig)
+            : base(parentView, lineConfig, deviceConfig)
+        {
+        }
+    }
+}
+Create a DrvAbcView class whose code is shown below. This class implements a general, non-device specific driver user interface. View the source code of the DriverView base class to learn about the available features.
+using Scada.Comm.Config;
+using Scada.Comm.Devices;
+
+namespace Scada.Comm.Drivers.DrvAbc.View
+{
+    public class DrvAbcView : DriverView
+    {
+        public DrvAbcView()
+            : base()
+        {
+            CanCreateDevice = true;
+        }
+
+        public override string Name => "ABC Driver";
+
+        public override string Descr => "Simple driver example";
+
+        public override DeviceView CreateDeviceView(LineConfig lineConfig, DeviceConfig deviceConfig)
+        {
+            return new DevAbcView(this, lineConfig, deviceConfig);
+        }
+    }
+}
+An example of the driver part responsible for the user interface is ready. Build the project and copy DrvAbc.View.dll to the Administrator libraries directory ScadaAdmin\Lib
+Run Driver
+Start the Administrator application or restart it if it is open. Create a new project and find the developed driver in the Communicator > Drivers section. Select the driver and make sure its description is displayed correctly. If an error occurs when displaying a driver description, there is most likely an inaccuracy in the namespace or class names of the driver user interface.
+Create a communication line and add a device using the DrvAbc driver to the line. Run the project. In the communication line log you can see information about the operation of the created driver:
+2024-04-18 13:15:41 Session with the device [3] ABC
+DrvAbc driver polling session
+
+
+Web Plugin Development
+Using web plugins you can create:
+• New types of views.
+• Components for mimic diagrams.
+• Reports.
+• Web pages for data manipulation.
+Let's look at the development of the web interface and interface for configuration a simple plugin, which will be named PlgAbc. To develop a complex plugin, learn and use the source code of existing plugins on GitHub as examples.
+Implementation of Web Interface
+Create a new project based on the Razor Class Library template. Enter the project name PlgAbc, select the .NET 8.0 framework and set the Support pages and views checkbox.
+Add dependencies to the ScadaCommon.dll, ScadaCommon.Log.dll and ScadaWebCommon.dll libraries. Binary files of the libraries can be found in the Rapid SCADA installation directory, or compiled from source code.
+Double click a project node in Solution Explorer to open the project file PlgAbc.csproj and edit its properties as shown below.
+<PropertyGroup>
+  <TargetFramework>net8.0</TargetFramework>
+  <Nullable>disable</Nullable>
+  <ImplicitUsings>enable</ImplicitUsings>
+  <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+  <RootNamespace>Scada.Web.Plugins.PlgAbc</RootNamespace>
+</PropertyGroup>
+Create a PluginInfo class and copy the code below. This class contains information that describes the plugin.
+namespace Scada.Web.Plugins.PlgAbc
+{
+    internal class PluginInfo : LibraryInfo
+    {
+        public override string Code => "PlgAbc";
+        public override string Name => "ABC Plugin";
+        public override string Descr => "Simple plugin example";
+    }
+}
+Create a PlgAbcLogic class whose code is shown below. This class implements the basic logic of the plugin. Note that the namespace and class name must contain the PlgAbc plugin code. Explore the source code of the PluginLogic base class to learn about the capabilities available when implementing plugin logic.
+using Scada.Data.Entities;
+using Scada.Web.Services;
+using Scada.Web.TreeView;
+using Scada.Web.Users;
+
+namespace Scada.Web.Plugins.PlgAbc
+{
+    public class PlgAbcLogic : PluginLogic
+    {
+        public PlgAbcLogic(IWebContext webContext)
+            : base(webContext)
+        {
+            Info = new PluginInfo();
+        }
+
+        public override List<MenuItem> GetUserMenuItems(User user, UserRights userRights)
+        {
+            return
+            [
+                new() { Text = "ABC", Url = "~/Abc/MyPage", SortOrder = MenuItemSortOrder.First }
+            ];
+        }
+    }
+}
+Create an empty Razor Page named MyPage.cshtml located in the Abc area. The project structure is shown in the following figure.
+
+The contents of the MyPage.cshtml.cs page model are shown below. To better understand the page source code, it is suggested to view the service interfaces available in the web application through dependency injection.
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Scada.Web.Services;
+
+namespace Scada.Web.Plugins.PlgAbc.Areas.Abc.Pages
+{
+    public class MyPageModel(IWebContext webContext, IUserContext userContext) : PageModel
+    {
+        public int ChannelCount => webContext.ConfigDatabase.CnlTable.ItemCount;
+        public string UserName => userContext.UserEntity.Name;
+    }
+}
+The page layout file MyPage.cshtml has the following contents:
+@page
+@model Scada.Web.Plugins.PlgAbc.Areas.Abc.Pages.MyPageModel
+@{
+    Layout = "_MainLayout";
+    ViewBag.Title = "My Page";
+}
+
+<h1>My Page</h1>
+<p>Number of channels: @Model.ChannelCount</p>
+<p>Current user: @Model.UserName</p>
+An example of the web interface of the plugin is ready. Build the project and copy PlgAbc.dll to the root directory of the Webstation application.
+Implementation of Configuration Interface
+Create a new project based on the Class Library template. Enter the project name PlgAbc.View, and select the .NET 8.0 framework.
+Add dependencies to the ScadaCommon.dll and ScadaWebCommon.Subset.dll libraries.
+Double click a project node in Solution Explorer to open the project file PlgAbc.View.csproj and edit its properties as shown below.
+<PropertyGroup>
+  <TargetFramework>net8.0</TargetFramework>
+  <ImplicitUsings>enable</ImplicitUsings>
+  <Nullable>disable</Nullable>
+  <RootNamespace>Scada.Web.Plugins.PlgAbc.View</RootNamespace>
+</PropertyGroup>
+Add the previously created PluginInfo.cs file to the project as a reference. Note that the file icon looks like a link.
+
+Create a PlgAbcView class and copy the code below. This class implements the user interface of the plugin for the Administrator application. Note that the namespace and class name must contain the PlgAbc plugin code. In the example, there is actually no user interface for the plugin, however, a minimal implementation of the interface is required so that the plugin can be used in the Administrator application. View the source code of the PluginView base class to learn about the available features.
+namespace Scada.Web.Plugins.PlgAbc.View
+{
+    public class PlgAbcView : PluginView
+    {
+        public PlgAbcView()
+        {
+            Info = new PluginInfo();
+        }
+    }
+}
+Build the project and copy PlgAbc.View.dll to the Administrator libraries directory ScadaAdmin\Lib
+Run Plugin
+Start the Administrator application or restart it if it is open. Create and open a copy of the HelloWorld project, then find the developed plugin in the Webstation > Plugins section. Select the plugin and make sure its description is displayed correctly. If an error occurs when displaying a plugin description, there is most likely an inaccuracy in the namespace or class names of the plugin user interface.
+Activate the PlgAbc plugin and upload the project for execution. In the Webstation application, navigate to Main Menu > ABC to open the web page provided by the developed plugin.
+
+Module Store
+About Store
+Rapid SCADA Module Store helps users find and download additional modules developed by various authors. For developers, Module Store is a platform where an author can present his modules to potential users or buyers.
+Module Store is located at https://rapidscada.net/store/
+Module Requirements
+Community developers can develop any modules for Rapid SCADA. To publish in the store, a developed module must meet the following requirements:
+1. The module web page should contain the contacts of the author and technical support. There is no need to create a dedicated module website. This can be a shared site such as a forum, social network, or GitHub.
+2. The module must be documented. It is recommended, in addition to the text manual, to develop a video instruction that is desired by users.
+3. If a module duplicates the functionality of paid modules developed by the Rapid SCADA team, then the price of your module should not be lower than the price of a similar existing module.
+The final decision to publish a module is made by the moderator.
+Module Naming
+Module name should reflect the purpose of the module, and may also contain the full or abbreviated name of the author. Suppose an author named Lion King has developed a driver that implements the MQTT protocol. Then the appropriate module name would be Lion MQTT Driver.
+Module file name is related to the module display name. Module file names use prefixes to indicate the type of module. For example:
+• PlgChartPro.dll - Webstation plugin,
+• ModAutoControl.Logic.dll - Server module,
+• DrvTelegram.Logic.dll - Communicator driver,
+• ExtTableEditor.dll - extension for the Administrator application.
+It is recommended to use a file suffix to indicate authorship of a module. Continuing with the example, the driver file might be named DrvMqttLion.Logic.dll.
+Add Your Module
+To add your module to the store, fill out the form. Below are guidelines for completing some of the form fields.
+Module home URL
+Specify a web page that contains general information about the module. Example:
+https://forum.rapidscada.org/?topic=driver-gpio-for-scada-v6-1
+Module documentation URL
+Specify a web page that contains instructions for setting up the module. Example:
+https://github.com/JurasskPark/RapidScada_v6/tree/master/OpenDrivers
+Download URL
+Specify a link to a cloud storage where the author can easily upload new versions. Examples:
+https://github.com/Manjey73/OpenDrivers/releases?q=DrvGpiod
+https://drive.google.com/drive/folders/18bApJzEzJ_ipM8m89N7YZNH-M8BcYQuE
+
+Version History
+History of Rapid SCADA
+Server History
+Communicator History
+Webstation History
+Agent History
+Administrator History
+History of Additional Applications
+
+History of Rapid SCADA
+Rapid SCADA 6.4.3 (September 24, 2025)
+• Server 6.2.2.1
+• Communicator 6.2.0.1
+• Webstation 6.2.2.0
+– PlgChart 6.1.0.1
+– PlgMain 6.1.1.1
+– PlgMimic 6.0.0.1
+– PlgMimicEditor 6.0.0.1
+– PlgMimBasicComp 6.0.0.1
+• Agent 6.2.0.1
+• Administrator 6.2.2.0
+• Scheme Editor 5.3.1.1
+Rapid SCADA 6.4.2 (August 26, 2025)
+• Server 6.2.2.0
+– ModActiveDirectory 6.1.1.0
+– ModArcBasic 6.2.1.0
+– ModArcInfluxDb 6.2.1.0
+– ModArcPostgreSql 6.2.2.0
+– ModDbExport 6.1.1.2
+– ModDiffCalculator 6.0.1.0
+• Communicator 6.2.0.1
+– DrvDbImport 6.1.0.2
+– DrvMqttPublisher 6.1.0.1
+– DrvOpcUa 6.1.1.0
+• Webstation 6.2.2.0
+– PlgMain 6.1.1.0
+– PlgMimic 6.0.0.0
+– PlgMimicEditor 6.0.0.0
+– PlgMimBasicComp 6.0.0.0
+– PlgScheme 6.1.1.0
+– PlgWebPage 6.1.1.0
+• Agent 6.2.0.1
+• Administrator 6.2.2.0
+– ExtDepPostgreSql 6.1.0.1
+– ExtMimicLauncher 6.0.0.0
+– ExtWebConfig 6.1.0.2
+• Scheme Editor 5.3.1.1
+Rapid SCADA 6.4.1 (April 01, 2025)
+• Server 6.2.2.0
+– ModArcPostgreSql 6.2.1.0
+– ModDbExport 6.1.1.1
+• Communicator 6.2.0.1
+– DrvCnlMqtt 6.1.0.1
+– DrvDbImport 6.1.0.1
+• Webstation 6.2.1.0
+• Agent 6.2.0.1
+• Administrator 6.2.1.3
+– ExtTableEditor 6.1.1.0
+• Scheme Editor 5.3.1.1
+Rapid SCADA 6.4.0 (January 23, 2025)
+• Server 6.2.1.0
+– ModArcPostgreSql 6.2.0.1
+– ModDbExport 6.1.1.0
+• Communicator 6.2.0.1
+• Webstation 6.2.0.3
+• Agent 6.2.0.1
+• Administrator 6.2.1.2
+– ExtCommConfig 6.1.0.1
+– ExtServerConfig 6.1.0.1
+– ExtWebConfig 6.1.0.1
+• Scheme Editor 5.3.1.1
+Rapid SCADA 6.3.1 (October 15, 2024)
+• Server 6.2.0.1
+– ModDbExport 6.1.0.1
+• Communicator 6.2.0.1
+• Webstation 6.2.0.3
+– PlgMain 6.1.0.1
+– PlgStore 6.1.0.1
+• Agent 6.2.0.1
+• Administrator 6.2.1.1
+– ExtExternalTools 6.0.0.0
+– ExtTableEditor 6.1.0.1
+• Scheme Editor 5.3.1.1
+Rapid SCADA 6.3.0 (August 12, 2024)
+• Server 6.2.0.1
+– ModActiveDirectory 6.1.0.0
+– ModArcBasic 6.2.0.0
+– ModArcInfluxDb 6.2.0.0
+– ModArcPostgreSql 6.2.0.0
+– ModDbExport 6.1.0.0
+• Communicator 6.2.0.1
+– DrvCnlBasic 6.1.0.1
+– DrvCnlMqtt 6.1.0.0
+– DrvDbImport 6.1.0.0
+– DrvDsMqtt 6.1.0.0
+– DrvDsOpcUaServer 6.1.0.0
+– DrvModbus 6.0.0.4
+– DrvMqttClient 6.1.0.0
+– DrvMqttPublisher 6.1.0.0
+– DrvOpcUa 6.1.0.0
+• Webstation 6.2.0.2
+– PlgChart 6.1.0.0
+– PlgMain 6.1.0.0
+– PlgScheme 6.1.0.0
+– PlgSchBasicComp 6.1.0.0
+– PlgStore 6.1.0.0
+– PlgWebPage 6.1.0.0
+• Agent 6.2.0.1
+• Administrator 6.2.1.0
+– ExtCommConfig 6.1.0.0
+– ExtDepAgent 6.1.0.0
+– ExtDepPostgreSql 6.1.0.0
+– ExtProjectTools 6.1.0.0
+– ExtServerConfig 6.1.0.0
+– ExtWebConfig 6.1.0.0
+– ExtWirenBoard 6.1.0.0
+• Scheme Editor 5.3.1.1
+Rapid SCADA 6.2.1 (March 26, 2024)
+• Server 6.2.0.0
+– ModDbExport 6.0.1.1
+– ModDiffCalculator 6.0.0.0
+• Communicator 6.2.0.0
+– DrvDsOpcUaServer 6.0.0.2
+– DrvOpcClassic 6.0.1.2
+– DrvOpcUa 6.0.0.1
+• Webstation 6.2.0.1
+• Agent 6.2.0.1
+• Administrator 6.2.0.0
+– ExtTableEditor 6.1.0.0
+• Scheme Editor 5.3.1.1
+Rapid SCADA 6.2.0 (January 27, 2024)
+• Server 6.2.0.0
+– ModArcPostgreSql 6.1.2.1
+– ModDbExport 6.0.1.0
+• Communicator 6.2.0.0
+– DrvCnlBasic 6.1.0.0
+• Webstation 6.2.0.0
+• Agent 6.2.0.0
+• Administrator 6.2.0.0
+• Scheme Editor 5.3.1.1
+Rapid SCADA 6.1.6 (December 10, 2023)
+• Server 6.1.1.1
+– ModActiveDirectory 6.0.2.0
+– ModArcPostgreSql 6.1.2.0
+– ModDbExport 6.0.0.2
+• Communicator 6.1.1.1
+– DrvCsvReader 6.0.0.0
+– DrvMqttClient 6.0.0.4
+– DrvOpcClassic 6.0.1.1
+• Webstation 6.1.2.2
+– PlgMain 6.0.3.1
+• Agent 6.1.0.1
+• Administrator 6.1.1.1
+• Scheme Editor 5.3.1.1
+Rapid SCADA 6.1.5 (September 25, 2023)
+• Server 6.1.1.1
+• Communicator 6.1.1.1
+– DrvDbImport 6.0.0.1
+– DrvDsOpcUaServer 6.0.0.1
+– DrvOpcClassic 6.0.1.0
+• Webstation 6.1.2.1
+• Agent 6.1.0.0
+• Administrator 6.1.1.0
+– ExtProjectTools 6.0.1.0
+– ExtWirenBoard 6.0.0.1
+• Scheme Editor 5.3.1.1
+Rapid SCADA 6.1.4 (August 03, 2023)
+• Server 6.1.1.1
+– ModArcPostgreSql 6.1.1.1
+• Communicator 6.1.1.1
+• Webstation 6.1.2.0
+– PlgChart 6.0.2.0
+– PlgMain 6.0.3.0
+– PlgScheme 6.0.2.0
+– PlgSchBasicComp 6.0.2.0
+– PlgStore 6.0.0.0
+– PlgWebPage 6.0.2.0
+• Agent 6.1.0.0
+• Administrator 6.1.0.3
+• Scheme Editor 5.3.1.1
+Rapid SCADA 6.1.3 (July 04, 2023)
+• Server 6.1.1.0
+– ModArcPostgreSql 6.1.1.0
+– ModDbExport 6.0.0.1
+• Communicator 6.1.1.0
+– DrvCnlBasic 6.0.1.0
+– DrvMqttClient 6.0.0.3
+– DrvMqttPublisher 6.0.0.3
+– DrvSnmp 6.0.0.1
+• Webstation 6.1.1.0
+– PlgChart 6.0.1.0
+– PlgMain 6.0.2.0
+– PlgScheme 6.0.1.0
+– PlgSchBasicComp 6.0.1.0
+– PlgWebPage 6.0.1.0
+• Agent 6.1.0.0
+• Administrator 6.1.0.2
+– ExtCommConfig 6.0.1.2
+• Scheme Editor 5.3.1.1
+Rapid SCADA 6.1.2 (May 15, 2023)
+• Server 6.1.0.2
+• Communicator 6.1.0.1
+– DrvModbus 6.0.0.3
+– DrvMqttClient 6.0.0.2
+• Webstation 6.1.0.1
+– PlgMain 6.0.1.1
+– PlgScheme 6.0.0.1
+• Agent 6.1.0.0
+• Administrator 6.1.0.2
+– ExtServerConfig 6.0.1.1
+• Scheme Editor 5.3.1.1
+Rapid SCADA 6.1.1 (April 02, 2023)
+• Server 6.1.0.1
+• Communicator 6.1.0.0
+– DrvDsScadaServer 6.0.1.1
+• Webstation 6.1.0.0
+• Agent 6.1.0.0
+• Administrator 6.1.0.1
+– ExtCommConfig 6.0.1.1
+• Scheme Editor 5.3.1.1
+Rapid SCADA 6.1.0 (March 21, 2023)
+• Server 6.1.0.0
+– ModActiveDirectory 6.0.1.0
+– ModArcBasic 6.1.0.0
+– ModArcInfluxDb 6.1.0.0
+– ModArcPostgreSql 6.1.0.0
+• Communicator 6.1.0.0
+– DrvCnlMqtt 6.0.0.2
+– DrvDsMqtt 6.0.0.2
+– DrvDsScadaServer 6.0.1.0
+– DrvModbus 6.0.0.2
+– DrvMqttPublisher 6.0.0.2
+• Webstation 6.1.0.0
+– PlgMain 6.0.1.0
+• Agent 6.1.0.0
+• Administrator 6.1.0.0
+– ExtCommConfig 6.0.1.0
+– ExtProjectTools 6.0.0.2
+– ExtServerConfig 6.0.1.0
+• Scheme Editor 5.3.1.1
+Rapid SCADA 6.0.2 (February 20, 2023)
+• Server 6.0.0.2
+• Communicator 6.0.0.2
+– DrvCnlBasic 6.0.0.1
+– DrvDbImport 6.0.0.0
+– DrvEnronModbus 6.0.0.0
+– DrvModbus 6.0.0.1
+– DrvSms 6.0.0.0
+– DrvSnmp 6.0.0.0
+• Webstation 6.0.0.1
+• Agent 6.0.0.0
+• Administrator 6.0.0.1
+• Scheme Editor 5.3.1.1
+Rapid SCADA 6.0.1 (January 17, 2023)
+• Server 6.0.0.1
+– ModActiveDirectory 6.0.0.0
+– ModArcInfluxDb 6.0.0.1
+– ModDbExport 6.0.0.0
+• Communicator 6.0.0.1
+– DrvCnlMqtt 6.0.0.1
+– DrvDsMqtt 6.0.0.1
+– DrvDsScadaServer 6.0.0.1
+– DrvMqttClient 6.0.0.1
+– DrvMqttPublisher 6.0.0.1
+• Webstation 6.0.0.1
+– PlgChart 6.0.0.1
+– PlgSchBasicComp 6.0.0.1
+• Agent 6.0.0.0
+• Administrator 6.0.0.1
+– ExtProjectTools 6.0.0.1
+– ExtServerConfig 6.0.0.1
+• Scheme Editor 5.3.1.1
+Rapid SCADA 6.0.0 (December 03, 2022)
+• Server 6.0.0.0
+• Communicator 6.0.0.0
+• Webstation 6.0.0.0
+• Agent 6.0.0.0
+• Administrator 6.0.0.0
+• Scheme Editor 5.3.1.1
+
+
+Server History
+Server Application
+ScadaServer 6.2.2.1 (September 24, 2025)
+• Fixed calculation of channel status taking deadband into account
+ScadaServer 6.2.2.0 (April 01, 2025)
+• Writes initial command values ??to events
+• Prevents infinity in historical data
+ScadaServer 6.2.1.0 (January 23, 2025)
+• Changes in module methods that handle writing of historical data and events
+• Fixed Deriv function
+• Fixed writing to archive on change
+ScadaServer 6.2.0.1 (August 12, 2024)
+• Fixed a bug with incorrect timestamps when writing historical data
+ScadaServer 6.2.0.0 (January 27, 2024)
+• Upgrade to .NET 8.0
+ScadaServer 6.1.1.1 (August 03, 2023)
+• Code refactoring
+ScadaServer 6.1.1.0 (July 04, 2023)
+• Works with new instance configuration
+• Time of writing to archives is set as current when Server starts.
+ScadaServer 6.1.0.2 (May 15, 2023)
+• Fixed waiting for service stop
+ScadaServer 6.1.0.1 (April 02, 2023)
+• Fixed reading configuration database
+ScadaServer 6.1.0.0 (March 21, 2023)
+• Added the Command format column to the Channels table
+• New faster application protocol
+• Output formula can return a CnlData instance
+• Third-party applications can be started from scripts
+• Changes in the module API
+ScadaServer 6.0.0.2 (February 20, 2023)
+• Non-numeric event channel values are replaced with zero
+• Limit deadband can be bound to channel
+ScadaServer 6.0.0.1 (January 17, 2023)
+• Fixed hang on stop if some modules are in use
+• Added an option whether to use archival channel status
+ScadaServer 6.0.0.0 (December 03, 2022)
+• New configuration database
+• Configuration database can be stored in files and PostgreSQL database
+• Secure and fast application communication protocol
+• Channel formulas became more powerful
+• No limit on the number of channels and devices
+• Flexible archives
+Active Directory Module
+ModActiveDirectory 6.1.1.0 (August 26, 2025)
+• Build due to changes in the base libraries
+ModActiveDirectory 6.1.0.0 (August 12, 2024)
+• Upgrade to .NET 8.0
+ModActiveDirectory 6.0.2.0 (December 10, 2023)
+• User information is stored in PostgreSQL database
+ModActiveDirectory 6.0.1.0 (March 21, 2023)
+• Added an option to enable or disable search in Active Directory
+ModActiveDirectory 6.0.0.0 (January 17, 2023)
+• Security groups can be used to assign custom roles
+Basic Archive
+ModArcBasic 6.2.1.0 (August 26, 2025)
+• Supports monthly writing period
+ModArcBasic 6.2.0.0 (August 12, 2024)
+• Upgrade to .NET 8.0
+• Added historical archive options
+• Trend table format has been updated
+ModArcBasic 6.1.0.0 (March 21, 2023)
+• Refactoring and optimization
+ModArcBasic 6.0.0.0 (December 03, 2022)
+• Initial development of the module
+InfluxDB Archive
+ModArcInfluxDb 6.2.1.0 (August 26, 2025)
+• Supports monthly writing period
+ModArcInfluxDb 6.2.0.0 (August 12, 2024)
+• Upgrade to .NET 8.0
+• Added historical archive options
+ModArcInfluxDb 6.1.0.0 (March 21, 2023)
+• Refactoring and optimization
+ModArcInfluxDb 6.0.0.1 (January 17, 2023)
+• Fixed loading of module configuration
+ModArcInfluxDb 6.0.0.0 (December 03, 2022)
+• Initial development of the module
+PostgreSQL Archive
+ModArcPostgreSql 6.2.2.0 (August 26, 2025)
+• Supports monthly writing period
+ModArcPostgreSql 6.2.1.0 (April 01, 2025)
+• Historical archive supports in-memory caching
+ModArcPostgreSql 6.2.0.1 (January 23, 2025)
+• Handling partition missing error
+ModArcPostgreSql 6.2.0.0 (August 12, 2024)
+• Upgrade to .NET 8.0
+• Added historical archive options
+ModArcPostgreSql 6.1.2.1 (January 27, 2024)
+• Fixed a bug when writing events
+ModArcPostgreSql 6.1.2.0 (December 10, 2023)
+• Added a partition size of one day
+ModArcPostgreSql 6.1.1.1 (August 03, 2023)
+• Fixed batch size
+ModArcPostgreSql 6.1.1.0 (July 04, 2023)
+• Changes in archive options
+ModArcPostgreSql 6.1.0.0 (March 21, 2023)
+• Refactoring and optimization
+ModArcPostgreSql 6.0.0.0 (December 03, 2022)
+• Initial development of the module
+Automatic Control Module
+ModAutoControl 6.1.1.1 (March 17, 2025)
+• Fixed cancel changes function
+ModAutoControl 6.1.1.0 (January 23, 2025)
+• Build due to changes in the base libraries
+ModAutoControl 6.1.0.1 (August 12, 2024)
+• Build due to changes in the base libraries
+ModAutoControl 6.1.0.0 (February 26, 2024)
+• Upgrade to .NET 8.0
+• Implemented multi-channel data trigger
+• Supports event generation on triggers
+• Added a firing rate option in data change trigger
+• Added variables to output channel limits
+• Improved channel filters in data and event triggers
+• Fixed a bug when generating command text
+ModAutoControl 6.0.0.4 (January 27, 2024)
+• Does not use BinaryFormatter
+ModAutoControl 6.0.0.3 (December 10, 2023)
+• Fixed copying a command value in data change trigger
+• Fixed trigger copying on the configuration form
+ModAutoControl 6.0.0.2 (September 25, 2023)
+• Fixes on module configuration form
+ModAutoControl 6.0.0.1 (May 15, 2023)
+• Fixed formatting of variable values in commands
+ModAutoControl 6.0.0.0 (December 03, 2022)
+• Added new variables available in command text
+• Channels, devices and other entities can be selected from dictionaries
+• Implemented copying and pasting of triggers
+DB Export
+ModDbExport 6.1.1.2 (August 26, 2025)
+• Dependencies updated
+ModDbExport 6.1.1.1 (April 01, 2025)
+• Fixed cancel changes function
+ModDbExport 6.1.1.0 (January 23, 2025)
+• Fixed query filter by objects and devices
+• Delay before historical data export works differently
+ModDbExport 6.1.0.1 (October 15, 2024)
+• Refactoring of loading and saving configuration
+ModDbExport 6.1.0.0 (August 12, 2024)
+• Upgrade to .NET 8.0
+• Fixed label text on the module configuration form
+ModDbExport 6.0.1.1 (March 26, 2024)
+• Added delay option when exporting calculated historical data
+ModDbExport 6.0.1.0 (January 27, 2024)
+• Export of calculated historical data
+ModDbExport 6.0.0.2 (December 10, 2023)
+• Fixed query filter editing
+• Added available query parameters
+ModDbExport 6.0.0.1 (July 04, 2023)
+• Optimized module configuration source code
+ModDbExport 6.0.0.0 (January 17, 2023)
+• Export status can be bound to a channel
+• Added a feature to export current data on timer
+• Added a feature to export event acknowledgments and commands
+• Object filter added to query options
+• Module task queue
+Difference Calculator
+ModDiffCalculator 6.0.1.0 (August 26, 2025)
+• Added an option to continuously calculate the difference between historical and current data
+• Added an option to adjust for daylight saving time
+ModDiffCalculator 6.0.0.0 (March 26, 2024)
+• Initial development of the module
+Performance Monitor
+ModPerformanceMonitor 6.1.1.0 (January 23, 2025)
+• Build due to changes in the base libraries
+ModPerformanceMonitor 6.1.0.0 (August 12, 2024)
+• Upgrade to .NET 8.0
+ModPerformanceMonitor 6.0.0.0 (March 21, 2023)
+• Initial development of the module
+Rapid Gate
+ModRapidGate 6.1.1.1 (April 01, 2025)
+• Fixed cancel changes function
+ModRapidGate 6.1.1.0 (January 23, 2025)
+• Historical data and events are transferred if the archive mask matches
+ModRapidGate 6.1.0.0 (August 12, 2024)
+• Upgrade to .NET 8.0
+ModRapidGate 6.0.1.4 (January 27, 2024)
+• Does not use BinaryFormatter
+ModRapidGate 6.0.1.3 (December 10, 2023)
+• Fixed a bug when sending acknowledgments
+ModRapidGate 6.0.1.2 (July 04, 2023)
+• Optimized module configuration source code
+ModRapidGate 6.0.1.1 (April 02, 2023)
+• Command handling changed
+• Fixed statistics calculation for current data
+ModRapidGate 6.0.1.0 (March 21, 2023)
+• Batch transfer of current data
+ModRapidGate 6.0.0.1 (January 17, 2023)
+• Code refactoring
+ModRapidGate 6.0.0.0 (December 03, 2022)
+• Implemented the mode of automatic download of an archive from a backup server
+• Events are transferred when replicating archives
+• Event acknowledgments are transferred
+• Added an option to replicate only by command
+• Archive mask for receiving and transmitting
+• Option whether to apply formulas and generate events on data transfer
+• Server address is checked to prevent loops
+• Gateways are controlled by command code without using channel number
+• Module task queue
+Replication Helper
+ModReplicationHelper 6.1.0.0 (August 12, 2024)
+• Upgrade to .NET 8.0
+ModReplicationHelper 6.0.0.0 (December 03, 2022)
+• Initial development of the module
+
+Communicator History
+Communicator Application
+ScadaComm 6.2.0.1 (August 12, 2024)
+• Data type matching between channel and tag is not required
+• Logs a list of communication lines that have not stopped
+ScadaComm 6.2.0.0 (January 27, 2024)
+• Upgrade to .NET 8.0
+ScadaComm 6.1.1.1 (August 03, 2023)
+• Code refactoring
+ScadaComm 6.1.1.0 (July 04, 2023)
+• Works with new instance configuration
+• Device status is set to error if connection is not established
+ScadaComm 6.1.0.1 (May 15, 2023)
+• Fixed waiting for service stop
+ScadaComm 6.1.0.0 (March 21, 2023)
+• Uses new configuration database and application protocol
+ScadaComm 6.0.0.2 (February 20, 2023)
+• Inactive communication line can be started with a command
+ScadaComm 6.0.0.1 (January 17, 2023)
+• Device status is written as 0 or 1
+• If line logging is disabled, device information files are not written
+ScadaComm 6.0.0.0 (December 03, 2022)
+• Communication channels are implemented using drivers
+• Data sources for interaction with other applications
+• Queue for sending data to the server
+• Device tag codes make it easy to bind tags to channels
+• Supports tags that are strings or arrays
+• Device status can be bound to a channel
+• Communication lines can be started or stopped with commands from the server
+• Configuration check: duplicate lines and devices are ignored, calculated channels are not bound to tags
+Basic Communication Channels
+DrvCnlBasic 6.1.0.1 (August 12, 2024)
+• TCP client communication channel has been optimized
+DrvCnlBasic 6.1.0.0 (January 27, 2024)
+• Upgrade to .NET 8.0
+DrvCnlBasic 6.0.1.0 (July 04, 2023)
+• Added TCP client option whether to disconnect if session fails
+DrvCnlBasic 6.0.0.1 (February 20, 2023)
+• Fixed a bug in UDP communication channel
+DrvCnlBasic 6.0.0.0 (December 03, 2022)
+• Initial development of the driver
+MQTT Communication Channel
+DrvCnlMqtt 6.1.0.1 (April 01, 2025)
+• Fixed a bug when receiving an empty message
+DrvCnlMqtt 6.1.0.0 (August 12, 2024)
+• Upgrade to .NET 8.0
+DrvCnlMqtt 6.0.0.2 (March 21, 2023)
+• Fixed display of channel status
+DrvCnlMqtt 6.0.0.1 (January 17, 2023)
+• Updated MQTTnet dependency
+DrvCnlMqtt 6.0.0.0 (December 03, 2022)
+• Initial development of the driver
+CSV Reader
+DrvCsvReader 6.0.0.0 (December 10, 2023)
+• Initial development of the driver
+DB Import
+DrvDbImport 6.1.0.2 (August 26, 2025)
+• Dependencies updated
+DrvDbImport 6.1.0.1 (April 01, 2025)
+• Fixed cancel changes function
+DrvDbImport 6.1.0.0 (August 12, 2024)
+• Upgrade to .NET 8.0
+DrvDbImport 6.0.0.1 (September 25, 2023)
+• Fixed editing query parameters
+DrvDbImport 6.0.0.0 (February 20, 2023)
+• Common database connection is used on communication line
+• Reads values from row or column
+• Supports multiple requests per device
+MQTT Data Source
+DrvDsMqtt 6.1.0.0 (August 12, 2024)
+• Upgrade to .NET 8.0
+DrvDsMqtt 6.0.0.2 (March 21, 2023)
+• Data queue refactoring
+DrvDsMqtt 6.0.0.1 (January 17, 2023)
+• Updated MQTTnet dependency
+DrvDsMqtt 6.0.0.0 (December 03, 2022)
+• Initial development of the driver
+OPC UA Server
+DrvDsOpcUaServer 6.1.0.0 (August 12, 2024)
+• Upgrade to .NET 8.0
+DrvDsOpcUaServer 6.0.0.2 (March 26, 2024)
+• Updated OPCFoundation.NetStandard.Opc.Ua dependencies
+DrvDsOpcUaServer 6.0.0.1 (September 25, 2023)
+• Fixed error when loading configuration from PostgreSQL
+DrvDsOpcUaServer 6.0.0.0 (December 03, 2022)
+• Initial development of the driver
+Server Data Source
+DrvDsScadaServer 6.0.1.1 (April 02, 2023)
+• Fixed reading configuration database
+• Fixed statistics calculation
+DrvDsScadaServer 6.0.1.0 (March 21, 2023)
+• Batch transfer of current data
+DrvDsScadaServer 6.0.0.1 (January 17, 2023)
+• Added an option to read the configuration database
+DrvDsScadaServer 6.0.0.0 (December 03, 2022)
+• Initial development of the driver
+Email
+DrvEmail 6.0.0.0 (December 03, 2022)
+• Email is resent in case of an error
+Enron Modbus
+DrvEnronModbus 6.0.0.0 (February 20, 2023)
+• Porting the driver to the new version
+HTTP Notifications
+DrvHttpNotif 6.0.0.0 (December 03, 2022)
+• Porting the driver to the new version
+Modbus
+DrvModbus 6.0.0.4 (August 12, 2024)
+• Fixed bug in requests in ASCII mode on Linux
+DrvModbus 6.0.0.3 (May 15, 2023)
+• Supports A...F digits in byte order
+DrvModbus 6.0.0.2 (March 21, 2023)
+• Fixed channel generation
+DrvModbus 6.0.0.1 (February 20, 2023)
+• Fixed bugs in the driver user interface
+DrvModbus 6.0.0.0 (December 03, 2022)
+• Added a feature to send commands with a custom function code
+• Template elements are both readable and writeable
+• Added the Bit mask element parameter for generating calculated channels
+• Inactive groups are not output to a device state file
+• Added a feature to copy element parameters to its group
+• Added a template validation feature
+Modbus Slave
+DrvModbusSlave 6.1.0.2 (February 10, 2025)
+• Fixed a bug when working in gateway mode
+DrvModbusSlave 6.1.0.1 (October 15, 2024)
+• Fixed saving changes of channel gateway options
+DrvModbusSlave 6.1.0.0 (August 12, 2024)
+• Upgrade to .NET 8.0
+DrvModbusSlave 6.0.0.1 (April 11, 2024)
+• Fixed a bug when reading data in Independent device mode
+DrvModbusSlave 6.0.0.0 (March 21, 2023)
+• Gateway mode for selected channels
+MQTT Client
+DrvMqttClient 6.1.0.0 (August 12, 2024)
+• Upgrade to .NET 8.0
+DrvMqttClient 6.0.0.4 (December 10, 2023)
+• Fixed JavaScript execution
+DrvMqttClient 6.0.0.3 (July 04, 2023)
+• Optimized driver configuration source code
+DrvMqttClient 6.0.0.2 (May 15, 2023)
+• JavaScript execution refactoring
+DrvMqttClient 6.0.0.1 (January 17, 2023)
+• Updated MQTTnet dependency
+DrvMqttClient 6.0.0.0 (December 03, 2022)
+• The driver is completely redesigned
+MQTT Publisher
+DrvMqttPublisher 6.1.0.1 (August 26, 2025)
+• Selecting published channel using dialog box
+DrvMqttPublisher 6.1.0.0 (August 12, 2024)
+• Upgrade to .NET 8.0
+DrvMqttPublisher 6.0.0.3 (July 04, 2023)
+• Optimized driver configuration source code
+DrvMqttPublisher 6.0.0.2 (March 21, 2023)
+• Commands are returned to Communicator
+DrvMqttPublisher 6.0.0.1 (January 17, 2023)
+• Updated MQTTnet dependency
+DrvMqttPublisher 6.0.0.0 (December 03, 2022)
+• Initial development of the driver
+OPC Classic
+DrvOpcClassic 6.0.1.2 (March 26, 2024)
+• Fixed a bug that occured if the device is not configured
+DrvOpcClassic 6.0.1.1 (December 10, 2023)
+• Improved reconnection when connection is lost
+DrvOpcClassic 6.0.1.0 (September 25, 2023)
+• Added support for synchronous reading
+• Fixed subscription creation
+DrvOpcClassic 6.0.0.0 (December 03, 2022)
+• Client can connect to remote host
+• Connection options are common to communication line
+• Items are both readable and writeable
+• Supports arrays and strings
+OPC UA
+DrvOpcUa 6.1.1.0 (August 26, 2025)
+• Reconnects if there is no new data
+• Channel-based subscription creation mode
+DrvOpcUa 6.1.0.0 (August 12, 2024)
+• Upgrade to .NET 8.0
+DrvOpcUa 6.0.0.1 (March 26, 2024)
+• Updated OPCFoundation.NetStandard.Opc.Ua dependencies
+DrvOpcUa 6.0.0.0 (December 03, 2022)
+• Connection options are common to communication line
+• Items are both readable and writeable
+• Supports arrays and strings
+• User can select item data type
+Device Simulator
+DrvSimulator 6.0.0.0 (December 03, 2022)
+• Added an array device tag
+SMS
+DrvSms 6.0.0.0 (February 20, 2023)
+• Porting the driver to the new version
+SNMP
+DrvSnmp 6.0.0.1 (July 04, 2023)
+• Optimized driver configuration source code
+DrvSnmp 6.0.0.0 (February 20, 2023)
+• Porting the driver to the new version
+Telegram
+DrvTelegram 6.1.0.0 (August 12, 2024)
+• Upgrade to .NET 8.0
+DrvTelegram 6.0.0.1 (May 15, 2023)
+• Fixed chat ID input
+DrvTelegram 6.0.0.0 (December 03, 2022)
+• Bot token is stored encrypted
+Communication Channel Tester
+DrvTester 6.0.0.0 (December 03, 2022)
+• Initial development of the driver
+
+Webstation History
+Webstation Application
+ScadaWeb 6.2.2.0 (August 26, 2025)
+• Added support for transitive dependencies of view resources
+• Checking for unacceptability of Application role when user logs in
+• Changes in the plugin API
+ScadaWeb 6.2.1.0 (April 01, 2025)
+• Changes in the plugin API
+ScadaWeb 6.2.0.3 (October 15, 2024)
+• Changes in CSS
+ScadaWeb 6.2.0.2 (August 12, 2024)
+• Support for binary format of channel values
+• Inactive channels are hidden in the channel selection form
+ScadaWeb 6.2.0.1 (March 26, 2024)
+• Changes in Access denied page
+ScadaWeb 6.2.0.0 (January 27, 2024)
+• Upgrade to .NET 8.0
+ScadaWeb 6.1.2.2 (December 10, 2023)
+• Fixed authorization handling
+• New features of modal forms
+• Changes in CSS and JavaScript
+ScadaWeb 6.1.2.1 (September 25, 2023)
+• Fixed translation on the channel selection page
+ScadaWeb 6.1.2.0 (August 03, 2023)
+• Fixed list of objects available to user
+• Changes in common classes
+ScadaWeb 6.1.1.0 (July 04, 2023)
+• Works with new instance configuration
+• Supports audit log
+• Plugins can add JavaScript to the main page
+ScadaWeb 6.1.0.1 (May 15, 2023)
+• Autofocus support for modal forms
+ScadaWeb 6.1.0.0 (March 21, 2023)
+• Support for external users
+ScadaWeb 6.0.0.1 (January 17, 2023)
+• Changes in common JavaScript classes
+ScadaWeb 6.0.0.0 (December 03, 2022)
+• The web application is configured using the Administrator application
+• Timezone support
+• Captcha when logging in
+• Automatic login option
+• Flexible appearance customization
+Audit Log
+PlgAudit 6.1.1.0 (August 26, 2025)
+• Build due to changes in the base libraries
+PlgAudit 6.1.0.0 (August 12, 2024)
+• Upgrade to .NET 8.0
+PlgAudit 6.0.0.0 (August 03, 2023)
+• Initial development of the plugin
+Chart
+PlgChart 6.1.0.1 (September 24, 2025)
+• Fixed a bug occurred when switching to summer time in some countries
+PlgChart 6.1.0.0 (August 12, 2024)
+• Upgrade to .NET 8.0
+PlgChart 6.0.2.0 (August 03, 2023)
+• Provides plugin description
+PlgChart 6.0.1.0 (July 04, 2023)
+• Supports audit log
+• JavaScript refactoring
+PlgChart 6.0.0.1 (January 17, 2023)
+• Changes in JavaScript
+PlgChart 6.0.0.0 (December 03, 2022)
+• Added an address bar parameter to specify an archive for selecting data
+• Channel status is displayed after a channel value
+• Trend breaks when the data status is unreliable
+Chart Pro
+PlgChartPro 6.1.1.0 (August 26, 2025)
+• Uses updated plugin API
+PlgChartPro 6.1.0.0 (August 12, 2024)
+• Upgrade to .NET 8.0
+PlgChartPro 6.0.2.2 (December 10, 2023)
+• Fixed links to dialog pages and API
+PlgChartPro 6.0.2.1 (September 25, 2023)
+• Translation fixed
+PlgChartPro 6.0.2.0 (August 03, 2023)
+• Provides plugin description
+PlgChartPro 6.0.1.0 (July 04, 2023)
+• Supports audit log
+• JavaScript refactoring
+PlgChartPro 6.0.0.3 (April 27, 2023)
+• Fixed loading chart for the past period
+PlgChartPro 6.0.0.2 (April 02, 2023)
+• Fixed zoom button color
+PlgChartPro 6.0.0.1 (January 17, 2023)
+• Changes in JavaScript
+PlgChartPro 6.0.0.0 (December 03, 2022)
+• Chart configuration profile is selectable
+• Supports views to display a chart with given arguments
+• Displays data for the future if data exists
+• Y-axis fixed range option
+• Option to display trend color according to channel status
+Dashboard
+PlgDashboard 6.1.1.0 (August 26, 2025)
+• Uses updated plugin API
+PlgDashboard 6.1.0.0 (August 12, 2024)
+• Upgrade to .NET 8.0
+PlgDashboard 6.0.1.0 (August 03, 2023)
+• Fixed display of long strings
+• Provides plugin description
+PlgDashboard 6.0.0.0 (July 04, 2023)
+• Links to charts and sending commands from current data widgets
+Database Report
+PlgDatabaseReport 6.0.0.0 (August 26, 2025)
+• Initial development of the plugin
+Elastic Report
+PlgElasticReport 6.1.1.0 (August 26, 2025)
+• Dependencies updated
+PlgElasticReport 6.1.0.2 (April 01, 2025)
+• Fixed a bug in calculating the report period
+• Fixed a bug when displaying data for a specific time
+PlgElasticReport 6.1.0.1 (February 19, 2025)
+• Supports the offset parameter in PrintReport2 query
+PlgElasticReport 6.1.0.0 (August 12, 2024)
+• Upgrade to .NET 8.0
+PlgElasticReport 6.0.2.0 (August 03, 2023)
+• Supports loading fonts
+• Phrase names converted to camel-casing format
+• Provides plugin description
+PlgElasticReport 6.0.1.0 (July 04, 2023)
+• End date in report arguments is 1 day more
+• Supports audit log
+PlgElasticReport 6.0.0.0 (May 15, 2023)
+• Supports XLSX format
+• Archive can be selected as a report parameter
+• Text color is set according to data status
+• Styles for XLSX format are configured using XML file
+• Added new features of report sections
+Guard
+PlgGuard 6.1.0.0 (August 12, 2024)
+• Upgrade to .NET 8.0
+PlgGuard 6.0.1.0 (August 03, 2023)
+• Provides plugin description
+PlgGuard 6.0.0.0 (December 03, 2022)
+• Initial development of the plugin
+Main Plugin
+PlgMain 6.1.1.1 (September 24, 2025)
+• Fixed a bug occurred when switching to summer time in some countries
+PlgMain 6.1.1.0 (August 26, 2025)
+• Command API is always available
+PlgMain 6.1.0.1 (October 15, 2024)
+• MainApi returns multiple event colors
+PlgMain 6.1.0.0 (August 12, 2024)
+• Upgrade to .NET 8.0
+• Support for binary command format
+PlgMain 6.0.3.1 (December 10, 2023)
+• Fixed link to dialog pages
+• Event window is disabled if the number of displayed events is 0
+PlgMain 6.0.3.0 (August 03, 2023)
+• Changes in JavaScript API
+• Fixed current data request for empty channel list
+• Provides plugin description
+PlgMain 6.0.2.0 (July 04, 2023)
+• Supports audit log
+• Improved filters when using plugin API
+• When requesting events, a view is loaded if necessary
+• JavaScript refactoring
+PlgMain 6.0.1.1 (May 15, 2023)
+• Table view styles changed
+• Autofocus on the command form
+PlgMain 6.0.1.0 (March 21, 2023)
+• Uses channel command format
+PlgMain 6.0.0.0 (December 03, 2022)
+• New file format of table views
+• The command form displays an error message received from the server
+• The command form displays a description of the channel format, if the format is a string
+• Reporting period can be specified up to minutes
+• An archive for which a report is generated can be selected
+• The maximum reporting period is specified in the configuration
+Map
+PlgMap 6.1.1.0 (August 26, 2025)
+• Uses updated plugin API
+PlgMap 6.1.0.1 (August 12, 2024)
+• Code refactoring
+PlgMap 6.1.0.0 (March 04, 2023)
+• Upgrade to .NET 8.0
+PlgMap 6.0.0.0 (August 03, 2023)
+• Switch between tile layers
+• Customizable marker icons
+• Marker labels
+• Home button on a map
+• Displays moving objects
+• Displays geometric shapes
+Mimic Diagrams (New)
+PlgMimic 6.0.0.1 (September 24, 2025)
+• Bug fixes
+PlgMimic 6.0.0.0 (August 26, 2025)
+• Initial development of the plugin
+Mimic Editor (New)
+PlgMimicEditor 6.0.0.1 (September 24, 2025)
+• Bug fixes
+PlgMimicEditor 6.0.0.0 (August 26, 2025)
+• Initial development of the plugin
+Basic Mimic Components (New)
+PlgMimBasicComp 6.0.0.1 (September 24, 2025)
+• Bug fixes
+PlgMimBasicComp 6.0.0.0 (August 26, 2025)
+• Initial development of the plugin
+Extra Scheme Components (New)
+PlgMimExtraComp 6.0.0.0 (September 24, 2025)
+• Initial development of the plugin
+Notification Plugin
+PlgNotification 6.1.0.0 (August 12, 2024)
+• Upgrade to .NET 8.0
+PlgNotification 6.0.1.0 (August 03, 2023)
+• Phrase names converted to camel-casing format
+• Provides plugin description
+PlgNotification 6.0.0.0 (July 04, 2023)
+• Added the Ack All button
+Schemes (Classic)
+PlgScheme 6.1.1.0 (August 26, 2025)
+• Uses updated plugin API
+PlgScheme 6.1.0.0 (August 12, 2024)
+• Upgrade to .NET 8.0
+• Date is not specified when opening chart
+PlgScheme 6.0.2.0 (August 03, 2023)
+• Provides plugin description
+PlgScheme 6.0.1.0 (July 04, 2023)
+• Supports audit log
+• Fixed loading scheme title
+• JavaScript refactoring
+PlgScheme 6.0.0.1 (May 15, 2023)
+• Fixed scheme component style
+PlgScheme 6.0.0.0 (December 03, 2022)
+• Scheme is horizontally centered
+Basic Scheme Components (Classic)
+PlgSchBasicComp 6.1.0.0 (August 12, 2024)
+• Upgrade to .NET 8.0
+PlgSchBasicComp 6.0.2.0 (August 03, 2023)
+• Provides plugin description
+PlgSchBasicComp 6.0.1.0 (July 04, 2023)
+• JavaScript refactoring
+PlgSchBasicComp 6.0.0.1 (January 17, 2023)
+• Fixed writing state of Link component
+PlgSchBasicComp 6.0.0.0 (December 03, 2022)
+• Porting the plugin to the new version
+Extra Scheme Components (Classic)
+PlgSchExtraComp 6.1.0.0 (August 12, 2024)
+• Upgrade to .NET 8.0
+PlgSchExtraComp 6.0.1.0 (August 03, 2023)
+• Provides plugin description
+PlgSchExtraComp 6.0.0.1 (July 04, 2023)
+• Fixed a bug with displaying a view in a frame
+PlgSchExtraComp 6.0.0.0 (January 17, 2023)
+• Porting the plugin to the new version
+Spreadsheet Report
+PlgSpreadsheetReport 6.0.0.0 (August 26, 2025)
+• Initial development of the plugin
+Store
+PlgStore 6.1.0.1 (October 15, 2024)
+• Fixed price display
+PlgStore 6.1.0.0 (August 12, 2024)
+• Upgrade to .NET 8.0
+PlgStore 6.0.0.0 (August 03, 2023)
+• Module search
+Web Pages
+PlgWebPage 6.1.1.0 (August 26, 2025)
+• Uses updated plugin API
+PlgWebPage 6.1.0.0 (August 12, 2024)
+• Upgrade to .NET 8.0
+PlgWebPage 6.0.2.0 (August 03, 2023)
+• Provides plugin description
+PlgWebPage 6.0.1.0 (July 04, 2023)
+• Supports audit log
+PlgWebPage 6.0.0.0 (December 03, 2022)
+• Porting the plugin to the new version
+
+Agent History
+ScadaAgent 6.2.0.1 (March 26, 2024)
+• Additionally checks a path when reading and writing files
+ScadaAgent 6.2.0.0 (January 27, 2024)
+• Upgrade to .NET 8.0
+ScadaAgent 6.1.0.1 (December 10, 2023)
+• Fixed temporary directory when configuration is uploaded to another instance
+ScadaAgent 6.1.0.0 (March 21, 2023)
+• Uses new application protocol
+ScadaAgent 6.0.0.0 (December 03, 2022)
+• Reverse connection, meaning that the Agent service initiates the connection
+• The Agent's login and password are specified in the application configuration
+• Supports sending commands to Communicator
+• Reads logs of all applications and modules
+
+Administrator History
+Administrator Application
+ScadaAdmin 6.2.2.0 (August 26, 2025)
+• Can create mimic diagram files of a new format
+• The Code field length increased to 500 characters
+• New formulas added to the project template
+ScadaAdmin 6.2.1.3 (April 01, 2025)
+• Fixed flickering of the project list on the start page
+• Changes in the extension API
+ScadaAdmin 6.2.1.2 (January 23, 2025)
+• Fixed a bug when saving a project
+ScadaAdmin 6.2.1.1 (October 15, 2024)
+• Development of interfaces available to extensions
+ScadaAdmin 6.2.1.0 (August 12, 2024)
+• Load extension configuration before editing it
+• The Refresh and Find buttons added to the application toolbar
+• Updated WinControl dependency
+ScadaAdmin 6.2.0.0 (January 27, 2024)
+• Upgrade to .NET 8.0
+ScadaAdmin 6.1.1.1 (December 10, 2023)
+• Fixed creation of channel limits
+ScadaAdmin 6.1.1.0 (September 25, 2023)
+• Added the Code column to the Channels table
+• Can reload the configuration database
+• Increased length of the Arguments column in the Views table
+• Changes in common classes
+ScadaAdmin 6.1.0.3 (August 03, 2023)
+• Code refactoring
+ScadaAdmin 6.1.0.2 (May 15, 2023)
+• Instance status form remains responsive if Agent is not available
+ScadaAdmin 6.1.0.1 (April 02, 2023)
+• UI fixes
+ScadaAdmin 6.1.0.0 (March 21, 2023)
+• Uses new configuration database and application protocol
+ScadaAdmin 6.0.0.1 (January 17, 2023)
+• Updated control for editing DB connection options
+ScadaAdmin 6.0.0.0 (December 03, 2022)
+• Supports extensions
+• Indicates a progress of configuration transfer
+• Added a feature to import configuration database tables from CSV files
+Communicator Configurator
+ExtCommConfig 6.1.0.1 (January 23, 2025)
+• Changes related to driver registration
+ExtCommConfig 6.1.0.0 (August 12, 2024)
+• Upgrade to .NET 8.0
+ExtCommConfig 6.0.1.2 (July 04, 2023)
+• Added inactive device icon
+ExtCommConfig 6.0.1.1 (April 02, 2023)
+• Fixed layout of controls
+ExtCommConfig 6.0.1.0 (March 21, 2023)
+• Added new application options
+ExtCommConfig 6.0.0.0 (December 03, 2022)
+• Initial development of the extension
+Deployment with Agent
+ExtDepAgent 6.1.0.0 (August 12, 2024)
+• Upgrade to .NET 8.0
+ExtDepAgent 6.0.0.0 (December 03, 2022)
+• Initial development of the extension
+Deployment to Postgre SQL
+ExtDepPostgreSql 6.1.0.1 (August 26, 2025)
+• Dependencies updated
+ExtDepPostgreSql 6.1.0.0 (August 12, 2024)
+• Upgrade to .NET 8.0
+• Added an option to select configuration database cleanup method
+ExtDepPostgreSql 6.0.0.0 (December 03, 2022)
+• Initial development of the extension
+External Tools
+ExtExternalTools 6.0.0.0 (October 15, 2024)
+• Initial development of the extension
+Mimic Editor Launcher
+ExtMimicLauncher 6.0.0.0 (August 26, 2025)
+• Initial development of the extension
+Project Tools
+ExtProjectTools 6.1.0.0 (August 12, 2024)
+• Upgrade to .NET 8.0
+• Object editor
+• Right matrix
+ExtProjectTools 6.0.1.0 (September 25, 2023)
+• Object map
+• Channel cloning form updated
+• Encrypted password is hidden
+ExtProjectTools 6.0.0.2 (March 21, 2023)
+• BOM signature is written when exporting a table in CSV format
+ExtProjectTools 6.0.0.1 (January 17, 2023)
+• Added password encryption form
+ExtProjectTools 6.0.0.0 (December 03, 2022)
+• Initial development of the extension
+Server Configurator
+ExtServerConfig 6.1.0.1 (January 23, 2025)
+• Changes related to module registration
+ExtServerConfig 6.1.0.0 (August 12, 2024)
+• Upgrade to .NET 8.0
+ExtServerConfig 6.0.1.1 (May 15, 2023)
+• Fixed module interface initialization
+ExtServerConfig 6.0.1.0 (March 21, 2023)
+• Added new application options
+ExtServerConfig 6.0.0.1 (January 17, 2023)
+• Added an option whether to use archival channel status
+ExtServerConfig 6.0.0.0 (December 03, 2022)
+• Initial development of the extension
+Table Editor
+ExtTableEditor 6.1.1.0 (April 01, 2025)
+• Uses updated extension API
+ExtTableEditor 6.1.0.1 (October 15, 2024)
+• Supports the Refresh button on the application toolbar
+ExtTableEditor 6.1.0.0 (March 26, 2024)
+• Upgrade to .NET 8.0
+• Fixed a bug when editing a channel number
+ExtTableEditor 6.0.0.0 (December 03, 2022)
+• Initial development of the extension
+Webstation Configurator
+ExtWebConfig 6.1.0.2 (August 26, 2025)
+• Culture list was expanded with cultures without a region
+ExtWebConfig 6.1.0.1 (January 23, 2025)
+• Changes related to plugin registration
+ExtWebConfig 6.1.0.0 (August 12, 2024)
+• Upgrade to .NET 8.0
+ExtWebConfig 6.0.0.0 (December 03, 2022)
+• Initial development of the extension
+Wiren Board
+ExtWirenBoard 6.1.0.0 (August 12, 2024)
+• Upgrade to .NET 8.0
+ExtWirenBoard 6.0.0.1 (September 25, 2023)
+• Code refactoring
+ExtWirenBoard 6.0.0.0 (December 03, 2022)
+• Initial development of the extension
+
+
+History of Additional Applications
+Auto Report
+ScadaAutoReport 6.0.1.3 (August 26, 2025)
+• Inactive reports are skipped when executing a task
+• Fixed editing of custom report arguments
+ScadaAutoReport 6.0.1.2 (February 19, 2025)
+• Fixed bugs in the user interface
+ScadaAutoReport 6.0.1.1 (November 27, 2024)
+• Fixed editing of schedule options
+ScadaAutoReport 6.0.1.0 (January 27, 2024)
+• Upgrade to .NET 8.0
+ScadaAutoReport 6.0.0.1 (July 04, 2023)
+• Fixed calculation of report period
+ScadaAutoReport 6.0.0.0 (May 24, 2023)
+• Report types are loaded dynamically according to the configuration
+• Report culture and timezone are set in the configuration
+• Built-in task schedule
+• Each task has a separate mail recipient
+• Convenient options for choosing a report period
