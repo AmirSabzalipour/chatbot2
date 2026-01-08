@@ -1,8 +1,6 @@
 Rapid SCADA Docs (EN, latest)
 Table of Contents
 
-
-
 Rapid SCADA Docs
 
 • v6.4
